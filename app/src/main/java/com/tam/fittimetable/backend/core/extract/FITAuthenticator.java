@@ -1,4 +1,4 @@
-package fitrozvrh.core.extract;
+package com.tam.fittimetable.backend.core.extract;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -8,7 +8,7 @@ import java.net.PasswordAuthentication;
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
  * @source https://stackoverflow.com/questions/955624/download-a-file-from-the-internet-using-java-how-to-authenticate
  *          by user: <a href="https://stackoverflow.com/users/1342249/kairan">Kairan</a>
- * 
+ *
  */
 public class FITAuthenticator extends Authenticator {
     private static String username = "";
@@ -16,7 +16,7 @@ public class FITAuthenticator extends Authenticator {
 
 
     protected PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication (FITAuthenticator.username, 
+        return new PasswordAuthentication (FITAuthenticator.username,
                 FITAuthenticator.password.toCharArray());
     }
 

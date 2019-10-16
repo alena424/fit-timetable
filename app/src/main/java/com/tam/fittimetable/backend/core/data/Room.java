@@ -1,4 +1,4 @@
-package fitrozvrh.core.data;
+package com.tam.fittimetable.backend.core.data;
 
 /**
  *

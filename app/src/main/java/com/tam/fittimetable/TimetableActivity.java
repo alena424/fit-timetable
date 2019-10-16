@@ -1,4 +1,4 @@
-package com.example.fittimetable;
+package com.tam.fittimetable;
 
 import androidx.appcompat.app.AppCompatActivity;
 

@@ -1,7 +1,7 @@
-package fitrozvrh.core.extract;
+package com.tam.fittimetable.backend.core.extract;
 
-import fitrozvrh.core.data.Strings;
-import fitrozvrh.core.data.SubjectManager;
+import com.tam.fittimetable.backend.core.data.Strings;
+import com.tam.fittimetable.backend.core.data.SubjectManager;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -51,7 +51,7 @@ public class Extractor {
                 day = dayEl.select("th").first().text(); // select day name // Monday, Tuesday...
                 rowsToAnotherDay = Integer.parseInt(dayEl.select("th").first().attr("rowspan")); // selects day rowspan which indicates how many rows day contains
 
-                for (int i = 0; i < rowsToAnotherDay; i++) { //iterate through rows to select subjects                    
+                for (int i = 0; i < rowsToAnotherDay; i++) { //iterate through rows to select subjects
                     dayEl = elm.select("tr").get(rowCounter + i);
                     from = 7; //every day starts at 7 o'clock
                     to = 7; //every day starts at 7 o'clock
@@ -73,7 +73,7 @@ public class Extractor {
 
                         //System.out.println(name + "|" + subjectLink + "|" + room + "|" + from + "|" + to + "|" + day + "|" + color + "|--> " + manager.getSubjects().size());
                         manager.addSubject(name, getLinkToSubjectCard(subjectLink), room, from, to, day, color);
-                        manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();                        
+                        manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();
                         from += colspan;
                     }
                 }
@@ -116,7 +116,7 @@ public class Extractor {
             for (Element e : elms) {
                 String text = e.text().toLowerCase();
                 if (text.contains("-") && e.select("time").size() == 2) {
-                    // span with dates of semester looks like... 
+                    // span with dates of semester looks like...
                     //<span class="c-schedule__time font-secondary">
                     //    <time datetime="2019-09-23">23. September 2019</time>
                     //    -

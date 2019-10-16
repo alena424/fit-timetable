@@ -1,8 +1,8 @@
-package fitrozvrh.core.data;
+package com.tam.fittimetable.backend.core.data;
 
-import fitrozvrh.core.extract.DownloadException;
-import fitrozvrh.core.extract.Downloader;
-import fitrozvrh.core.extract.Extractor;
+import com.tam.fittimetable.backend.core.extract.DownloadException;
+import com.tam.fittimetable.backend.core.extract.Downloader;
+import com.tam.fittimetable.backend.core.extract.Extractor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.text.DateFormatter;
 
 /**
  *
@@ -84,7 +83,7 @@ public class SubjectManager {
     public static SubjectManager get() throws ParseException, DownloadException {
         if (manager == null) {
             manager = new SubjectManager();
-            
+
             Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
             extractor.parse();
         }

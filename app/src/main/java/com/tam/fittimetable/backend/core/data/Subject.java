@@ -1,6 +1,6 @@
-package fitrozvrh.core.data;
+package com.tam.fittimetable.backend.core.data;
 
-import fitrozvrh.core.extract.Downloader;
+import com.tam.fittimetable.backend.core.extract.Downloader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,9 +88,9 @@ public final class Subject {
                     weeks[i] = true;
                 }
                 return;
-            }            
+            }
             Elements rows = doc.selectFirst("table").selectFirst("tbody").select("tr");
-            
+
             if(doc.select("table").size() > 1) { //there are other tables
                 for (Element e : doc.select("table")) {
                     if(!e.select("th").isEmpty()) { // last often contains lectures timetable
@@ -98,7 +98,7 @@ public final class Subject {
                     }
                 }
             }
-            
+
             for (Element e : rows) {
                 if (e.select("th").isEmpty()) { // skip if there is no th, which significant day
                     continue;
@@ -120,7 +120,7 @@ public final class Subject {
                         if (weeksOfMentioning.contains(",")) { // if it contains "," there is more then 1 week of lecture
                             weekByWeek = weeksOfMentioning.split(","); // so split the string
                             for (int i = 0; i < weekByWeek.length; i++) {
-                                // iterate through but ignore the last one because there is nothing for us ;) 
+                                // iterate through but ignore the last one because there is nothing for us ;)
                                 int numberOfWeek = Integer.parseInt(weekByWeek[i].trim().split("\\.")[0]); // from 13. we want just 13
                                 weeks[numberOfWeek - 1] = true; // it is mentioned this week
                             }
@@ -131,10 +131,10 @@ public final class Subject {
                                 int index = SubjectManager.get().getWeekOfSemester(date);
                                 if(index > -1 && index < 13) {
                                     weeks[index] = true;
-                                }                                    
+                                }
                             } else {
                                 for (int i = 0; i + 1 < weekByWeek.length; i++) {
-                                    // iterate through but ignore the last one because there is nothing for us ;) 
+                                    // iterate through but ignore the last one because there is nothing for us ;)
                                     int numberOfWeek = Integer.parseInt(weekByWeek[i].trim().split("\\.")[0]); // from 13. we want just 13
                                     weeks[numberOfWeek - 1] = true; // it is mentioned this week
                                 }
@@ -181,9 +181,9 @@ public final class Subject {
     }
 
     /**
-     * 
+     *
      * @param week number of week (from 1 to 13)
-     * @return 
+     * @return
      */
     public boolean isMentioned(int week) {
         if(week < 1 || week > 13) {

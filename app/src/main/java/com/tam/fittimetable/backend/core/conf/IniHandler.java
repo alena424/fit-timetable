@@ -1,4 +1,4 @@
-package fitrozvrh.core.conf;
+package com.tam.fittimetable.backend.core.conf;
 
 /**
  * INI file has structure like this:
@@ -10,7 +10,7 @@ package fitrozvrh.core.conf;
 public class IniHandler {
     private final String conf = "conf/"; // path to directory with configuration
     private final String store = "saves/"; // path to saving directory
-    
+
     /**
      * Returns value in INI file. INI files has extension .INI
      * @param path path is related to root folder of application

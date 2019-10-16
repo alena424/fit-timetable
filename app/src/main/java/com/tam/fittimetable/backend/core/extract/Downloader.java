@@ -1,7 +1,7 @@
-package fitrozvrh.core.extract;
+package com.tam.fittimetable.backend.core.extract;
 
-import fitrozvrh.FITrozvrh;
-import fitrozvrh.core.data.Strings;
+import com.tam.fittimetable.backend.FITTimetable;
+import com.tam.fittimetable.backend.core.data.Strings;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -39,7 +39,7 @@ public class Downloader {
      * Downloads file with authentication
      *
      * @param storeTo
-     * @throws fitrozvrh.core.extract.DownloadException
+     * @throws com.tam.fittimetable.backend.core.extract.DownloadException
      * @see
      * https://stackoverflow.com/questions/955624/download-a-file-from-the-internet-using-java-how-to-authenticate
      * code by Kairan at Stack Overflow:
@@ -62,7 +62,7 @@ public class Downloader {
             } else {
                 FITAuthenticator.setPasswordAuthentication(System.getProperty("login"), System.getProperty("password"));
             }
-            
+
             Authenticator.setDefault(new FITAuthenticator());
             autheticatorSet = true;
         }
@@ -119,7 +119,7 @@ public class Downloader {
     public static File downloadAcademicYear(String link) {
         return new File("./test/academicYear.html");
     }
-    
+
     protected static void createFolders() {
         File f = new File(Strings.DOWNLOAD);
         if(!f.isDirectory()) {
@@ -130,7 +130,7 @@ public class Downloader {
     /**
      * Sets keystore or create new one exemple from
      * https://coderanch.com/t/133048/engineering/programmatically-create-keystore-import-certificate
-     * @throws fitrozvrh.core.extract.DownloadException
+     * @throws com.tam.fittimetable.backend.core.extract.DownloadException
      */
     public static void setKeystore() throws DownloadException {
         File keyStore = new File(Strings.KEYSTORE);
@@ -160,16 +160,16 @@ public class Downloader {
             }
             System.setProperty("javax.net.ssl.trustStore", Strings.KEYSTORE);
         } catch (KeyStoreException ex) {
-            Logger.getLogger(FITrozvrh.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FITTimetable.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadException("Keystore exception: " + ex.getMessage() + "\n" + ex.getStackTrace());
         } catch (IOException ex) {
-            Logger.getLogger(FITrozvrh.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FITTimetable.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadException("IOException exception: " + ex.getMessage() + "\n" + ex.getStackTrace());
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(FITrozvrh.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FITTimetable.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadException("NoSuchAlgorithmException exception: " + ex.getMessage() + "\n" + ex.getStackTrace());
         } catch (java.security.cert.CertificateException ex) {
-            Logger.getLogger(FITrozvrh.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FITTimetable.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadException("CertificateException exception: " + ex.getMessage() + "\n" + ex.getStackTrace());
         }
     }
