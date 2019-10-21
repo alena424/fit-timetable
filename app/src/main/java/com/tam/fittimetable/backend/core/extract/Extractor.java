@@ -47,9 +47,6 @@ public class Extractor {
             Element dayEl;
 
             for (int y = 0; y < 5; y++) { //iterate through week days
-                if (elm.select("tr").size() >= rowCounter) {
-                    continue;
-                }              
                 dayEl = elm.select("tr").get(rowCounter);
                 day = dayEl.select("th").first().text(); // select day name // Monday, Tuesday...
                 rowsToAnotherDay = Integer.parseInt(dayEl.select("th").first().attr("rowspan")); // selects day rowspan which indicates how many rows day contains

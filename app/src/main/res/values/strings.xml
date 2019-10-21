@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">FitTimetable</string>
     <string name="signup">SIGN UP</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
