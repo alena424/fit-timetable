@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 29
@@ -16,6 +18,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main { assets.srcDirs = ['src/main/assets', 'src/debug/assets/', 'src/main/assets/'] }
+        release { assets.srcDirs = ['src/release/assets', 'src/release/assets/'] }
+        debug { assets.srcDirs = ['src/debug/assets', 'src/debug/assets/'] }
+    }
 }
 
 dependencies {
@@ -23,5 +30,15 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'org.jsoup:jsoup:1.12.1'
+    implementation 'com.github.thellmund.Android-Week-View:core:4.0.0'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    implementation libraries.threeTenAbp
+    implementation 'com.google.android.material:material:1.1.0-alpha10'
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+}
+repositories {
+    mavenCentral()
 }

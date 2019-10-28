@@ -1,12 +1,11 @@
 package com.tam.fittimetable;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private Button button;
@@ -27,8 +26,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
    public void openActivity2(){
-        Intent intent = new Intent(this, TimetableActivity.class);
-        startActivity(intent);
+       // Intent intent = new Intent(this, TimetableActivity.class);
+        //startActivity(intent);
 
     }
 }
