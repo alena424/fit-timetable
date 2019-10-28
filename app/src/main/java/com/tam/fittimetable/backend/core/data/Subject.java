@@ -252,6 +252,33 @@ public final class Subject {
     public String toString() {
         return name + "|" + linkToSubject + "|" + room.getName() + "|" + from + "|" + to + "|" + day.shortCut() + "|" + color + "|" + semicolonedWeeks();
     }
+    
+    private String parseToJson(String arg, String value) {
+        return "\"" + arg + "\": \"" + value + "\"";
+    }
+    
+    private String parseToJson(String arg, int value) {
+        return "\"" + arg + "\": \"" + value + "\"";
+    }
+    
+    private String getMentionedWeeksInJson() {
+        return "\"weeks\": [" + semicolonedWeeks() + "]";
+    }
+    
+    public String toJson() {
+        return "{\n" 
+                + parseToJson("name", name) + ",\n"
+                + parseToJson("linkToSubject", linkToSubject) + ",\n"
+                + parseToJson("room", room.getName())+ ",\n"
+                + parseToJson("from", from)+ ",\n"
+                + parseToJson("startTime", from + ":00")+ ",\n"
+                + parseToJson("to", to)+ ",\n"
+                + parseToJson("endTime", to + ":00")+ ",\n"
+                + parseToJson("day", day.shortCut())+ ",\n"
+                + parseToJson("color", color)+ ",\n"
+                + getMentionedWeeksInJson()+ "\n"
+                + "}\n";
+    }
 
     public void setDay(String day) {
         if (day.length() > 3) {
