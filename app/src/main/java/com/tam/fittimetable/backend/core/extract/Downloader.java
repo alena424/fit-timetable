@@ -1,5 +1,9 @@
 package com.tam.fittimetable.backend.core.extract;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.AssetManager;
+
 import com.tam.fittimetable.backend.FITTimetable;
 import com.tam.fittimetable.backend.core.data.Strings;
 import java.io.BufferedInputStream;
@@ -17,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -27,6 +32,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
 /**
  *
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
@@ -34,7 +43,12 @@ import java.util.logging.Logger;
 public class Downloader {
 
     private static boolean autheticatorSet = false;
+    private static Context myContext = null;
+    private static SSLContext sslContext = null;
 
+    public static void setMyContext(Context c) {
+        myContext = c;
+    }
     /**
      * Downloads file with authentication
      *
@@ -69,8 +83,11 @@ public class Downloader {
 
         try {
             url = new URL(link);
-            is = url.openStream();  // throws an IOException
-            br = new BufferedReader(new InputStreamReader(is));
+            //is = url.openStream();  // throws an IOException
+            HttpsURLConnection urlConnection = (HttpsURLConnection)url.openConnection();
+            urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
+            InputStream in = urlConnection.getInputStream();
+            br = new BufferedReader(new InputStreamReader(in));
             BufferedWriter writer = new BufferedWriter(new FileWriter(new File(storeTo)));
             while ((line = br.readLine()) != null) {
                 writer.write(line);
@@ -141,23 +158,33 @@ public class Downloader {
 
         KeyStore ks;
         try {
-            ks = KeyStore.getInstance("JKS");
+            ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(null, null);
+            // Create a TrustManager that trusts the CAs in our KeyStore
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            //tmf.init(ks);
+
             List<String> files = new ArrayList<>();
             files.add(Strings.FIT_CACERT);
             files.add(Strings.VUT_CACERT);
             for (String file : files) {
-                FileInputStream fis = new FileInputStream(file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
+                AssetManager assetManager = myContext.getAssets();
+                InputStream is = assetManager.open(file);
+                //FileInputStream fis = new FileInputStream(is);
+                BufferedInputStream bis = new BufferedInputStream(is);
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 Certificate cert = null;
                 while (bis.available() > 0) {
                     cert = cf.generateCertificate(bis);
                     ks.setCertificateEntry(file.substring(5), cert);
                 }
-                //ks.setCertificateEntry(file.substring(5), cert);
-                ks.store(new FileOutputStream(Strings.KEYSTORE), "MyPass".toCharArray());
+                //ks.store(/*new FileOutputStream(Strings.KEYSTORE)*/assetManager.open(Strings.KEYSTORE) , "MyPass".toCharArray());
             }
+            tmf.init(ks);
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+
             System.setProperty("javax.net.ssl.trustStore", Strings.KEYSTORE);
         } catch (KeyStoreException ex) {
             Logger.getLogger(FITTimetable.class.getName()).log(Level.SEVERE, null, ex);
@@ -171,6 +198,8 @@ public class Downloader {
         } catch (java.security.cert.CertificateException ex) {
             Logger.getLogger(FITTimetable.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadException("CertificateException exception: " + ex.getMessage() + "\n" + ex.getStackTrace());
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
         }
     }
 }

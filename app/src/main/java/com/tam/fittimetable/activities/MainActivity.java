@@ -13,7 +13,14 @@ import com.tam.fittimetable.R;
 import com.tam.fittimetable.backend.core.data.Subject;
 import com.tam.fittimetable.backend.core.data.SubjectManager;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
+import com.tam.fittimetable.backend.core.extract.Downloader;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.text.ParseException;
 
 
@@ -29,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout myLayout = (LinearLayout) this.findViewById(R.id.loginLayout);
         myLayout.requestFocus();
 
-        //Downloader.setMyContext(this);
+        Downloader.setMyContext(this);
 
         //new AsyncCaller().execute();
 
@@ -42,11 +49,13 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (DownloadException e) {
                     e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
-   public void openActivity2() throws ParseException, DownloadException {
+   public void openActivity2() throws ParseException, IOException {
 
         EditText nameEdit = findViewById(R.id.loginName);
         EditText passwordEdit = findViewById(R.id.passwordId);
@@ -54,11 +63,12 @@ public class MainActivity extends AppCompatActivity {
        String password = String.valueOf(passwordEdit.getText());
 
       // SubjectManager courses = SubjectManager.get();
+      // InputStream caInput = this.getResources().openRawResource(R.raw.fitcacert);
        /*for (Subject course: SubjectManager.get().getSubjects()
             ) {
-           System.out.println(course.toString());
-       }
-        System.out.println(name +" "+ password);*/
+           System.out.println(course.toJson());
+       }*/
+        System.out.println(name +" "+ password);
 
        Intent intent = new Intent(this, StaticActivity.class);
        startActivity(intent);

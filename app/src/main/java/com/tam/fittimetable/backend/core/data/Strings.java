@@ -14,8 +14,8 @@ public class Strings {
     public static final String ACADEMIC_YEAR = "https://www.fit.vut.cz/study/calendar/2019/";
 
     public static final String CERTIFICATES = ROOT + "app/keystore/";
-    public static final String FIT_CACERT = CERTIFICATES + "fit-cacert.crt";
-    public static final String VUT_CACERT = CERTIFICATES + "BrnoUniversityofTechnologyCA.crt";
+    public static final String FIT_CACERT = "fit-cacert.crt";
+    public static final String VUT_CACERT =  "BrnoUniversityofTechnologyCA.crt";
     public static final String KEYSTORE = CERTIFICATES + "FitKeyStore";
 
     public static final String DOWNLOAD = ROOT + "downloads/";
