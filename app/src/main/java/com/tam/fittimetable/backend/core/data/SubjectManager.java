@@ -54,6 +54,18 @@ public class SubjectManager implements Runnable {
 
         return daysubjects;
     }
+    
+    public String getJson() {
+        String json = "";
+        for(Subject s : getSubjects()) {
+            json += s.toJson();
+            
+            if(getSubjects().size() - 1 != getSubjects().lastIndexOf(s)) // last one -> do not make ,
+                json += ",\n";
+        }
+        
+        return "[" + json + "]";
+    }
 
     /**
      * return list of Subjects begging at <i>time</i> sorted by days (Monday,

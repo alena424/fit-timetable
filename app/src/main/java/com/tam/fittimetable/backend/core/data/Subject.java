@@ -1,9 +1,11 @@
 package com.tam.fittimetable.backend.core.data;
 
+import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -265,8 +267,9 @@ public final class Subject {
         return "\"weeks\": [" + semicolonedWeeks() + "]";
     }
     
-    public String toJson() {
-        return "{\n" 
+    private String parseAttributes() {
+        return ""
+                + parseToJson("id", hashCode()) + ",\n"
                 + parseToJson("name", name) + ",\n"
                 + parseToJson("linkToSubject", linkToSubject) + ",\n"
                 + parseToJson("room", room.getName())+ ",\n"
@@ -276,8 +279,53 @@ public final class Subject {
                 + parseToJson("endTime", to + ":00")+ ",\n"
                 + parseToJson("day", day.shortCut())+ ",\n"
                 + parseToJson("color", color)+ ",\n"
-                + getMentionedWeeksInJson()+ "\n"
+                + getMentionedWeeksInJson()+ "";
+    }
+    
+    private String packJsonObject(String obj) {
+        return "{\n"
+                + obj
                 + "}\n";
+    }
+    
+    public String toJson() {
+        String tmp = parseAttributes(); // it is always same
+        String finalJson = "", actualJson = "";
+        Date begginingOfSemester = null;
+        Calendar c = Calendar.getInstance();
+        
+        try {
+            begginingOfSemester = SubjectManager.get().actualSemester().get(0);
+        } catch (ParseException | DownloadException ex) {
+            Logger.getLogger(Subject.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+        
+        int lastIndex = 0; // last index of true
+        for (int i = 0; i < 13; i++) {
+            if(weeks[i]) {
+                lastIndex = i;
+            }
+        }
+        
+        for (int i = 0; i <= lastIndex; i++) {
+            if(weeks[i]) { // subject is mentioned this week
+                c.setTime(begginingOfSemester);
+                c.add(Calendar.DAY_OF_MONTH, i*7 + day.value());
+                actualJson += tmp + ",\n";
+                
+                actualJson += parseToJson("dayOfMonth", c.get(Calendar.DAY_OF_MONTH)) + ",\n";
+                actualJson += parseToJson("month", c.get(Calendar.MONTH)) + ",\n";
+                actualJson += parseToJson("year", c.get(Calendar.YEAR)) + "\n";
+                finalJson += packJsonObject(actualJson);
+                if(i != lastIndex) { //if it is last record does not make ,
+                    finalJson += ",\n";
+                }                
+            }
+            actualJson = "";            
+        }
+        
+        return finalJson;
     }
 
     public void setDay(String day) {
