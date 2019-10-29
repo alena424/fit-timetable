@@ -18,11 +18,11 @@ import java.util.logging.Logger;
  *
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
  */
-public class SubjectManager {
+public class SubjectManager implements Runnable {
 
     private static SubjectManager manager = null;
     private final List<Subject> subjects;
-    private final List<Date> dates; // dates of semester , index 0: start of winter semester, 1 end of winter semester, 2/3 start/end
+    private List<Date> dates; // dates of semester , index 0: start of winter semester, 1 end of winter semester, 2/3 start/end
 
     public void addSubject(Subject s) {
         subjects.add(s);
@@ -84,8 +84,8 @@ public class SubjectManager {
         if (manager == null) {
             manager = new SubjectManager();
 
-            Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
-            extractor.parse();
+            //Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
+            //extractor.parse();
         }
 
         return manager;
@@ -177,7 +177,20 @@ public class SubjectManager {
 
     private SubjectManager() throws ParseException, DownloadException {
         subjects = new ArrayList<Subject>();
-        dates = Extractor.selectDatesOfSemesters();
+        //dates = Extractor.selectDatesOfSemesters();
+    }
+
+    @Override
+    public void run() {
+        try {
+            dates = Extractor.selectDatesOfSemesters();
+            Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
+            extractor.parse();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (DownloadException e) {
+            e.printStackTrace();
+        }
     }
 
     private class TimeComparator implements Comparator<Subject> {

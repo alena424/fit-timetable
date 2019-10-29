@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.tam.fittimetable.R;
 import com.tam.fittimetable.backend.core.data.Subject;
 import com.tam.fittimetable.backend.core.data.SubjectManager;
+import com.tam.fittimetable.backend.core.extract.AsyncCaller;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                new AsyncCaller().execute();
                 try {
                     openActivity2();
                 } catch (ParseException e) {
@@ -64,14 +66,14 @@ public class MainActivity extends AppCompatActivity {
 
       // SubjectManager courses = SubjectManager.get();
       // InputStream caInput = this.getResources().openRawResource(R.raw.fitcacert);
-       /*for (Subject course: SubjectManager.get().getSubjects()
+       for (Subject course: SubjectManager.get().getSubjects()
             ) {
            System.out.println(course.toJson());
-       }*/
+       }
         System.out.println(name +" "+ password);
 
-       Intent intent = new Intent(this, StaticActivity.class);
-       startActivity(intent);
+       /*Intent intent = new Intent(this, StaticActivity.class);
+       startActivity(intent);*/
 
     }
 }

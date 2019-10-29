@@ -88,7 +88,7 @@ public class Downloader {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             InputStream in = urlConnection.getInputStream();
             br = new BufferedReader(new InputStreamReader(in));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(storeTo)));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(File.createTempFile(storeTo,"",myContext.getCacheDir())));
             while ((line = br.readLine()) != null) {
                 writer.write(line);
             }
