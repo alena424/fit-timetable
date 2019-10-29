@@ -3,6 +3,7 @@ package com.tam.fittimetable.backend.core.extract;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Environment;
 
 import com.tam.fittimetable.backend.FITTimetable;
 import com.tam.fittimetable.backend.core.data.Strings;
@@ -88,14 +89,17 @@ public class Downloader {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             InputStream in = urlConnection.getInputStream();
             br = new BufferedReader(new InputStreamReader(in));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(File.createTempFile(storeTo,"",myContext.getCacheDir())));
+            File f = File.createTempFile(storeTo,"",Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES));
+            System.out.println("File: " + f);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(f));
             while ((line = br.readLine()) != null) {
                 writer.write(line);
             }
             writer.close();
-
-            File file = new File(storeTo);
-            return file;
+            return f;
+            //File file = new File(storeTo);
+            //return file;
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
             throw new DownloadException("MalformedURLException exception: " + mue.getMessage() + "\n" + mue.getStackTrace());

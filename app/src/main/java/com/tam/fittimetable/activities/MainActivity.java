@@ -1,15 +1,20 @@
 package com.tam.fittimetable.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.tam.fittimetable.R;
+import com.tam.fittimetable.backend.core.data.Strings;
 import com.tam.fittimetable.backend.core.data.Subject;
 import com.tam.fittimetable.backend.core.data.SubjectManager;
 import com.tam.fittimetable.backend.core.extract.AsyncCaller;
@@ -29,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
         Downloader.setMyContext(this);
 
+        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        requestPermissions(permissions, Strings.WRITE_REQUEST_CODE);
         //new AsyncCaller().execute();
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -75,5 +83,21 @@ public class MainActivity extends AppCompatActivity {
        /*Intent intent = new Intent(this, StaticActivity.class);
        startActivity(intent);*/
 
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case Strings.WRITE_REQUEST_CODE:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //Granted.
+
+                    System.out.println("Garantovany pristup");
+
+                }
+                else{
+                    //Denied.
+                }
+                break;
+        }
     }
 }

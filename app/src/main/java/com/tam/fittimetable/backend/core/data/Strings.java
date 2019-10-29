@@ -34,4 +34,7 @@ public class Strings {
     public static final String END_OF_YEAR = "31. December ";
 
     public static final String ALL_SEMESTER_EDUCATION = "lectures"; // field is written if subject is mentioned for whole semester
+
+    public static final String WRITE_EXTERNAL_STORAGE = "I want to write please";
+    public static final int WRITE_REQUEST_CODE = 888333444;
 }

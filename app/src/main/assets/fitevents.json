@@ -35,10 +35,12 @@
     {
         "name": "AVS 103",
         "dayOfMonth": 20, 
-"location" : "D105",
+        "location" : "D105",
         "startTime": "19:00",
         "endTime": "21:00",
-        "color": "#F8B552"
+        "color": "#F8B552",
+       "month" : 1,
+      "year" : 2019
     },
     {
         "name": "AVS 104",
