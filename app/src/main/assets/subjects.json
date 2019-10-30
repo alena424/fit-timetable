@@ -5,13 +5,13 @@
 "linkToSubject": "https://www.fit.vut.cz/study/course/13579/.en",
 "room": "E112",
 "from": "8",
-"startTime": "8:00",
+"startTime": "08:00",
 "to": "10",
 "endTime": "10:00",
 "day": "Mon",
 "color": "#99ff99",
 "weeks": [true,true,true,true,true,true,true,true,true,true,true,true,true],
-"dayOfMonth": "24",
+"dayOfMonth": 24,
 "month": "8",
 "year": "2019"
 }

@@ -18,6 +18,9 @@ data class ApiEvent(
     @SerializedName("name")
     var title: String,
     @Expose
+    @SerializedName("id")
+    var id: Long,
+    @Expose
     @SerializedName("dayOfMonth")
     var dayOfMonth: Int,
     @Expose
@@ -30,13 +33,14 @@ data class ApiEvent(
     @SerializedName("color")
     var color: String,
     @Expose
-    @SerializedName("location")
+    @SerializedName("room")
     var place: String
 ) : WeekViewDisplayable<ApiEvent> {
 
     override fun toWeekViewEvent(): WeekViewEvent<ApiEvent> {
         // Titles have the format "Event 123"
-        val id = title.split(" ").last().toLong()
+        //val id = title.split(" ").last().toLong()
+
 
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val start = checkNotNull(sdf.parse(startTime))

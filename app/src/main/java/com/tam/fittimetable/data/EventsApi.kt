@@ -25,7 +25,7 @@ class FakeEventsApi(
     ) {
         AsyncTask.execute {
             sleep(2_000)
-            val inputStream = context.assets.open("fitevents.json")
+            val inputStream = context.assets.open("subjects.json")
             val json = inputStream.reader().readText()
             //get()
 

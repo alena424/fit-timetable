@@ -260,7 +260,7 @@ public final class Subject {
     }
     
     private String parseToJson(String arg, int value) {
-        return "\"" + arg + "\": \"" + value + "\"";
+        return "\"" + arg + "\": " + value ;
     }
     
     private String getMentionedWeeksInJson() {

@@ -76,9 +76,10 @@ public class MainActivity extends AppCompatActivity {
       // InputStream caInput = this.getResources().openRawResource(R.raw.fitcacert);
        for (Subject course: SubjectManager.get().getSubjects()
             ) {
-           System.out.println(course.toJson());
+           //System.out.println(course.toJson());
        }
         System.out.println(name +" "+ password);
+       System.out.println(SubjectManager.get().getJson());
 
        /*Intent intent = new Intent(this, StaticActivity.class);
        startActivity(intent);*/
