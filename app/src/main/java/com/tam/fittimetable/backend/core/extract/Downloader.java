@@ -137,6 +137,25 @@ public class Downloader {
         }
     }
 
+    /**
+     * Downloads file with authentication
+     *
+     * @param storeTo
+     * @throws com.tam.fittimetable.backend.core.extract.DownloadException
+     *
+     * @param link
+     * @param checkExistence if it set to yes, it looks for existing file
+     * @return
+     */
+    public static File download(String link, String storeTo, Boolean checkExistence) throws IOException {
+        File loadeFile = new File(storeTo);
+        if (loadeFile.exists() && checkExistence) {
+            return loadeFile;
+        } else  { // it is like download new
+            return download(link, storeTo);
+        }
+    }
+
     public static File downloadNoCertificate(String link, String storeTo) {
         try {
             URL website = new URL(link);
@@ -162,7 +181,7 @@ public class Downloader {
     }
 
     protected static void createFolders() {
-        File f = new File(Strings.DOWNLOAD);
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
         if(!f.isDirectory()) {
             f.mkdir();
         }
@@ -225,5 +244,16 @@ public class Downloader {
         } catch (KeyManagementException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void recreateDir() {
+        System.out.println("Recreating download dir at: " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
+        if (f.exists()) {
+            if (f.isDirectory()) {
+                f.delete();
+            }
+        }
+        f.mkdir();
     }
 }

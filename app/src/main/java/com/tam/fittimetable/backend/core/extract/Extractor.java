@@ -76,7 +76,7 @@ public class Extractor {
                         room = e.select("a").get(1).text();
 
                         //System.out.println(name + "|" + subjectLink + "|" + room + "|" + from + "|" + to + "|" + day + "|" + color + "|--> " + manager.getSubjects().size());
-                        manager.addSubject(name, getLinkToSubjectCard(subjectLink), room, from, to, day, color);
+                        manager.addSubject(name, getLinkToSubjectCard(subjectLink, name), room, from, to, day, color);
                         manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();
                         from += colspan;
                     }
@@ -93,10 +93,11 @@ public class Extractor {
     /**
      *
      * @param link
+     * @param name name of subject for cache
      * @return
      */
-    private String getLinkToSubjectCard(String link) throws IOException {
-        Document doc = Jsoup.parse(Downloader.download(Strings.WEB_PREFIX + link, Strings.SUBJECT_PRIVATE_FILE), "ISO-8859-2");
+    private String getLinkToSubjectCard(String link, String name) throws IOException {
+        Document doc = Jsoup.parse(Downloader.download(Strings.WEB_PREFIX + link, Strings.SUBJECT_PRIVATE_FILE + name, true), "ISO-8859-2");
         Elements elms = doc.select("a"); // select a elemnts
 
         for (Element e : elms) {

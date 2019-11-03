@@ -18,7 +18,7 @@ public class Strings {
     public static final String VUT_CACERT = "BrnoUniversityofTechnologyCA.crt";
     public static final String KEYSTORE = CERTIFICATES + "FitKeyStore";
 
-    public static final String DOWNLOAD = "";//ROOT + "downloads/";
+    public static final String DOWNLOAD = ROOT + "downloads/";
     public static final String PRIVATE_TIMETABLE_FILE = DOWNLOAD + "private-timetable.html";
     public static final String SUBJECT_PRIVATE_FILE = DOWNLOAD + "private-subject.html";
     public static final String SUBJECT_CARD_FILE = DOWNLOAD + "subject-card.html";

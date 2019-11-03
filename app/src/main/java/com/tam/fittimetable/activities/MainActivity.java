@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Downloader.setMyContext(this);
+        Downloader.recreateDir();
 
         String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         requestPermissions(permissions, Strings.WRITE_REQUEST_CODE);

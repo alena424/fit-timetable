@@ -85,7 +85,7 @@ public final class Subject {
      */
     public void setWeeksOfMentoring() throws ParseException {
         try {
-            Document doc = Jsoup.parse(Downloader.download(linkToSubject, Strings.SUBJECT_CARD_FILE), "ISO-8859-2");
+            Document doc = Jsoup.parse(Downloader.download(linkToSubject, Strings.SUBJECT_CARD_FILE + name, true), "ISO-8859-2");
             if (doc.select("table").isEmpty()) { // there is no table with info, so it is mentioned for all weeks
                 for (int i = 0; i < 13; i++) {
                     weeks[i] = true;
