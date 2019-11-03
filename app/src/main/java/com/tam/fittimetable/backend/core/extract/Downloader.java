@@ -109,7 +109,7 @@ public class Downloader {
             //File f = File.createTempFile(storeTo,"",Environment.getExternalStoragePublicDirectory(
               //      Environment.DIRECTORY_PICTURES));
             File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo );
-            System.out.println("File: " + f);
+            System.out.println("Downloading file: " + f);
             BufferedWriter writer = new BufferedWriter(new FileWriter(f));
             while ((line = br.readLine()) != null) {
                 writer.write(line);
@@ -148,10 +148,14 @@ public class Downloader {
      * @return
      */
     public static File download(String link, String storeTo, Boolean checkExistence) throws IOException {
-        File loadeFile = new File(storeTo);
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo;
+        File loadeFile = new File(path);
+
         if (loadeFile.exists() && checkExistence) {
+            System.out.println("Cache hit: " + path);
             return loadeFile;
         } else  { // it is like download new
+            System.out.println("Cache MISS: " + path);
             return download(link, storeTo);
         }
     }
