@@ -44,7 +44,11 @@ public class SubjectManager implements Callable<Boolean> {
     }
 
     public void addSubject(String name, String link, String room, int from, int to, String day, String color) {
-        subjects.add(new Subject(name, link, room, from, to, day, color));
+        //subjects.add(new Subject(name, link, room, from, to, day, color));
+        Subject s = new Subject(name, link, room, from, to, day, color);
+        if(!contains(s)) {
+            subjects.add(s);
+        }
     }
 
     public List<Subject> getSubjects() {
@@ -73,12 +77,15 @@ public class SubjectManager implements Callable<Boolean> {
     public JsonArray getJson(Context context) throws IOException {
         String json = "";
         JsonArray allCoursesJson = new JsonArray();
+        int counter = 0;
         for(Subject s : getSubjects()) {
             json += s.toJson();
             allCoursesJson.add(s.toJson());
             
-            if(getSubjects().size() - 1 != getSubjects().lastIndexOf(s)) // last one -> do not make ,
+            if(getSubjects().size() - 1 != counter) // last one -> do not make ,
                 json += ",\n";
+
+            counter++;
         }
         json = "[" + json + "]";
 
