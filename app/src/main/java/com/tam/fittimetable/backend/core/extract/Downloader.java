@@ -46,6 +46,13 @@ public class Downloader {
     private static boolean autheticatorSet = false;
     private static Context myContext = null;
     private static SSLContext sslContext = null;
+    private static String login = null;
+    private static String password = null;
+
+    public static void setAuth(String log, String pass){
+        login = log;
+        password = pass;
+    }
 
     public static void setMyContext(Context c) {
         myContext = c;
@@ -62,25 +69,35 @@ public class Downloader {
      * @param link
      * @return
      */
-    public static File download(String link, String storeTo) throws DownloadException {
+    public static File download(String link, String storeTo) throws IOException {
         URL url;
         InputStream is = null;
         BufferedReader br;
         String line;
 
+
         if (!autheticatorSet) {
             // Install Authenticator
             createFolders();
             setKeystore();
-            if(System.getProperty("login") == null) { // for testing set in Strings class
-                FITAuthenticator.setPasswordAuthentication(Strings.LOGIN, Strings.PASSWORD);
-            } else {
-                FITAuthenticator.setPasswordAuthentication(System.getProperty("login"), System.getProperty("password"));
-            }
+            //if(System.getProperty("login") == null) { // for testing set in Strings class
+            FITAuthenticator.setPasswordAuthentication(login, password);
+           // System.out.println("aaaaa " +login + " " + password);
+            /*if ( ! login.isEmpty() && ! password.isEmpty() ){
+                    System.out.println("aaaaa");
+                    FITAuthenticator.setPasswordAuthentication(login, password);
+                } else {
+                    FITAuthenticator.setPasswordAuthentication(Strings.LOGIN, Strings.PASSWORD);
+                }
 
-            Authenticator.setDefault(new FITAuthenticator());
-            autheticatorSet = true;
-        }
+            } else {
+                System.out.println(System.getProperties());
+                FITAuthenticator.setPasswordAuthentication(System.getProperty("login"), System.getProperty("password"));
+            }*/
+
+
+
+       }
 
         try {
             url = new URL(link);
@@ -97,6 +114,8 @@ public class Downloader {
                 writer.write(line);
             }
             writer.close();
+            autheticatorSet = true; // povedlo se
+            Authenticator.setDefault(new FITAuthenticator());
             return f;
             //File file = new File(storeTo);
             //return file;
@@ -112,7 +131,7 @@ public class Downloader {
                     is.close();
                 }
             } catch (IOException ioe) {
-
+                throw new IOException(ioe.getMessage());
             }
         }
     }

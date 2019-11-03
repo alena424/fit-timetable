@@ -6,6 +6,10 @@ import com.tam.fittimetable.backend.core.data.Subject;
 import com.tam.fittimetable.backend.core.data.SubjectManager;
 
 import java.text.ParseException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class AsyncCaller extends AsyncTask<Void, Void, Void>
 {
@@ -22,15 +26,24 @@ public class AsyncCaller extends AsyncTask<Void, Void, Void>
         //do your long running http tasks here,you dont want to pass argument and u can access the parent class' variable url over here
         System.out.println("Downloading in progress");
 
+
         try {
-            Thread m = new Thread(SubjectManager.get());
-            m.run();
-            for (Subject s : SubjectManager.get().getSubjects()) {
+            ExecutorService es = Executors.newSingleThreadExecutor();
+           // Thread m = new Thread((Runnable) SubjectManager.get());
+           // m.run();
+            SubjectManager manager = new SubjectManager();
+            Future result = es.submit(manager);
+            result.get(); // status of task
+            for (Subject s : manager.get().getSubjects()) {
                 System.out.println(s);
             }
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (DownloadException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
 

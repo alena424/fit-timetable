@@ -111,7 +111,7 @@ public class Extractor {
     public static List<Date> selectDatesOfSemesters() throws ParseException {
         try {
             List<Date> dates = new ArrayList<Date>();
-            SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT);
+            SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_ACADEMIC);
 
             Document doc;
             doc = Jsoup.parse(Downloader.download(Strings.ACADEMIC_YEAR, Strings.ACADEMIC_YEAR_FILE), "ISO-8859-2");

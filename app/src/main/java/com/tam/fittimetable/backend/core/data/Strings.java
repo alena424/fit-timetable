@@ -11,7 +11,7 @@ public class Strings {
     public static final String ROOT = "./";
 
     public static final String PRIVATE_TIMETABLE_LINK = "https://wis.fit.vutbr.cz/FIT/st/studyps-l.php.en";
-    public static final String ACADEMIC_YEAR = "https://www.fit.vut.cz/study/calendar/2019/";
+    public static final String ACADEMIC_YEAR = "https://www.fit.vut.cz/study/calendar/2019/.en";
 
     public static final String CERTIFICATES = ROOT + "app/keystore/";
     public static final String FIT_CACERT = "fit-cacert.crt";
@@ -28,6 +28,8 @@ public class Strings {
     public static final String WEB_CODING = "ISO-8859-2";
 
     public static final String DATE_FORMAT = "dd. MMM yyyy";
+    public static final String DATE_FORMAT_ACADEMIC = "dd MMM yyyy";
+
     public static final String DATE_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";
     public static final String MIDDLE_OF_YEAR = "20. July ";
     public static final String BEGGINING_OF_YEAR = "1. January ";
@@ -37,4 +39,6 @@ public class Strings {
 
     public static final String WRITE_EXTERNAL_STORAGE = "I want to write please";
     public static final int WRITE_REQUEST_CODE = 888333444;
+
+    public static final String FILE_NAME = "courses.json";
 }

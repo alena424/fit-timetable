@@ -1,8 +1,15 @@
 package com.tam.fittimetable.backend.core.data;
 
+import android.content.Context;
+
+import com.google.gson.JsonArray;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 import com.tam.fittimetable.backend.core.extract.Extractor;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,19 +17,27 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  *
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
  */
-public class SubjectManager implements Runnable {
+public class SubjectManager implements Callable<Boolean> {
 
+    public boolean running = true;
     private static SubjectManager manager = null;
     private final List<Subject> subjects;
     private List<Date> dates; // dates of semester , index 0: start of winter semester, 1 end of winter semester, 2/3 start/end
+
+    public void SubjectManager(){
+
+    }
 
     public void addSubject(Subject s) {
         subjects.add(s);
@@ -55,16 +70,25 @@ public class SubjectManager implements Runnable {
         return daysubjects;
     }
     
-    public String getJson() {
+    public JsonArray getJson(Context context) throws IOException {
         String json = "";
+        JsonArray allCoursesJson = new JsonArray();
         for(Subject s : getSubjects()) {
             json += s.toJson();
+            allCoursesJson.add(s.toJson());
             
             if(getSubjects().size() - 1 != getSubjects().lastIndexOf(s)) // last one -> do not make ,
                 json += ",\n";
         }
-        
-        return "[" + json + "]";
+        json = "[" + json + "]";
+
+        // ulozime si ho
+        FileOutputStream fos = null;
+        fos = context.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
+        fos.write(allCoursesJson.toString().getBytes());
+
+        return allCoursesJson;
+      //  return json;
     }
 
     /**
@@ -187,22 +211,24 @@ public class SubjectManager implements Runnable {
         dates.add(new SimpleDateFormat(Strings.DATE_FORMAT).parse(date));
     }
 
-    private SubjectManager() throws ParseException, DownloadException {
+    public SubjectManager() throws ParseException, DownloadException {
         subjects = new ArrayList<Subject>();
         //dates = Extractor.selectDatesOfSemesters();
     }
 
     @Override
-    public void run() {
-        try {
-            dates = Extractor.selectDatesOfSemesters();
-            Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
-            extractor.parse();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (DownloadException e) {
-            e.printStackTrace();
-        }
+    public Boolean call() throws ParseException, IOException {
+        Boolean success = false;
+
+        running = true;
+        dates = Extractor.selectDatesOfSemesters();
+        Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
+        extractor.parse();
+        success = true;
+
+        running = false;
+
+        return success;
     }
 
     private class TimeComparator implements Comparator<Subject> {

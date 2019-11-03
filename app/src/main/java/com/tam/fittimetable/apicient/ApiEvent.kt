@@ -24,6 +24,12 @@ data class ApiEvent(
     @SerializedName("dayOfMonth")
     var dayOfMonth: Int,
     @Expose
+    @SerializedName("year")
+    var year: Int,
+    @Expose
+    @SerializedName("month")
+    var month: Int,
+    @Expose
     @SerializedName("startTime")
     var startTime: String,
     @Expose
@@ -47,11 +53,12 @@ data class ApiEvent(
         val end = checkNotNull(sdf.parse(endTime))
 
         val now = Calendar.getInstance()
+        //dayOfMonth = dayOfMonth -1;
 
         val startTime = now.clone() as Calendar
         startTime.timeInMillis = start.time
-        startTime.set(Calendar.YEAR, now.get(Calendar.YEAR))
-        startTime.set(Calendar.MONTH, now.get(Calendar.MONTH))
+        startTime.set(Calendar.YEAR, year)
+        startTime.set(Calendar.MONTH, month)
         startTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
         val endTime = startTime.clone() as Calendar
