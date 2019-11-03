@@ -106,8 +106,9 @@ public class Downloader {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             InputStream in = urlConnection.getInputStream();
             br = new BufferedReader(new InputStreamReader(in));
-            File f = File.createTempFile(storeTo,"",Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES));
+            //File f = File.createTempFile(storeTo,"",Environment.getExternalStoragePublicDirectory(
+              //      Environment.DIRECTORY_PICTURES));
+            File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo );
             System.out.println("File: " + f);
             BufferedWriter writer = new BufferedWriter(new FileWriter(f));
             while ((line = br.readLine()) != null) {
