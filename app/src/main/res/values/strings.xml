@@ -21,4 +21,5 @@
     <string name="settings_string">Nastavení</string>
     <string name="export_google">Export do google kalendáře</string>
     <string name="signout_string">Odhlásit se</string>
+    <string name="action_five_day_view">Pětidenní pohled</string>
 </resources>

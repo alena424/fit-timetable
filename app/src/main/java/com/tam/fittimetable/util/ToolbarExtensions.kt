@@ -7,17 +7,20 @@ import androidx.appcompat.widget.Toolbar
 import com.alamkanak.weekview.WeekView
 import com.tam.fittimetable.R
 
-private enum class WeekViewType(val value: Int) {
+enum class WeekViewType(val value: Int) {
     DayView(1),
     ThreeDayView(3),
-    WeekView(7)
+    WeekView(7),
+    FiveDaysView(5)
 }
+
+ public var currentViewType:  WeekViewType? = null
 
 fun Toolbar.setupWithWeekView(weekView: WeekView<*>) {
     val activity = context as Activity
     title = activity.label
 
-    var currentViewType = WeekViewType.DayView
+    currentViewType = WeekViewType.DayView
 
     inflateMenu(R.menu.main)
     setOnMenuItemClickListener { item ->
@@ -53,6 +56,7 @@ private fun mapMenuItemToWeekViewType(menuItem: MenuItem): WeekViewType {
         R.id.action_day_view -> WeekViewType.DayView
         R.id.action_three_day_view -> WeekViewType.ThreeDayView
         R.id.action_week_view -> WeekViewType.WeekView
+        R.id.action_five_day_view -> WeekViewType.FiveDaysView
         else -> throw IllegalArgumentException("Invalid menu item ID ${menuItem.itemId}")
     }
 }

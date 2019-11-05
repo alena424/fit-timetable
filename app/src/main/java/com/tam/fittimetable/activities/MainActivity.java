@@ -1,6 +1,7 @@
 package com.tam.fittimetable.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -14,6 +15,10 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.JsonArray;
 import com.tam.fittimetable.R;
 import com.tam.fittimetable.backend.core.data.Strings;
@@ -54,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout myLayout = (LinearLayout) this.findViewById(R.id.loginLayout);
         myLayout.requestFocus();
 
+        String release = Build.VERSION.RELEASE;
+        int sdkVersion = Build.VERSION.SDK_INT;
+
         EditText nameEdit = findViewById(R.id.loginName);
         EditText passwordEdit = findViewById(R.id.passwordId);
 
@@ -68,7 +76,14 @@ public class MainActivity extends AppCompatActivity {
         Downloader.recreateDir();
 
         String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        requestPermissions(permissions, Strings.WRITE_REQUEST_CODE);
+
+System.out.println(Build.VERSION.SDK_INT);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+            requestPermissions(permissions, Strings.WRITE_REQUEST_CODE);
+        } else {
+            updateAndroidSecurityProvider(this);
+        }
+
         //new AsyncCaller().execute();
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +95,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void updateAndroidSecurityProvider(Activity callingActivity) {
+        try {
+            ProviderInstaller.installIfNeeded(this);
+        } catch (GooglePlayServicesRepairableException e) {
+            // Thrown when Google Play Services is not installed, up-to-date, or enabled
+            // Show dialog to allow users to install, update, or otherwise enable Google Play services.
+            GooglePlayServicesUtil.getErrorDialog(e.getConnectionStatusCode(), callingActivity, 0);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            showToast(this,"Google Play Services not available.");
+        }
+    }
+
    public void openActivity2(){
        EditText nameEdit = findViewById(R.id.loginName);
        EditText passwordEdit = findViewById(R.id.passwordId);
