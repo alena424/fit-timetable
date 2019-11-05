@@ -78,6 +78,16 @@ public final class Subject {
     }
 
     /**
+     * Sets week at index to value
+     * @param index
+     */
+    public void setWeeksOfMentoring(int index, boolean value){
+        if (index >= 0 && index < 12) {
+            weeks[index] = value;
+        }
+    }
+
+    /**
      * Downloads file with subject card and extracts its mentoring weeks if
      * there is some special events listed in table with color #ffffdc which
      * means something really special like an exam, so we will check this events

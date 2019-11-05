@@ -77,7 +77,13 @@ public class Extractor {
 
                         //System.out.println(name + "|" + subjectLink + "|" + room + "|" + from + "|" + to + "|" + day + "|" + color + "|--> " + manager.getSubjects().size());
                         manager.addSubject(name, getLinkToSubjectCard(subjectLink, name), room, from, to, day, color);
-                        manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();
+                        if (e.select("nobr").size() > 0) {
+                            SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_YYYY_MM_DD);
+                            int index = SubjectManager.get().getWeekOfSemester(formatter.parse(e.select("nobr").first().text()));
+                            manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring(index, true);
+                        } else {
+                            manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();
+                        }
                         from += colspan;
                     }
                 }
