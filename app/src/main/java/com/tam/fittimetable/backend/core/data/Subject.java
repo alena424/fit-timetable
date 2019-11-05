@@ -1,5 +1,6 @@
 package com.tam.fittimetable.backend.core.data;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
@@ -132,8 +133,12 @@ public final class Subject {
                                 SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_YYYY_MM_DD);
                                 Date date = formatter.parse(weekByWeek[0].trim());
                                 int index = SubjectManager.get().getWeekOfSemester(date);
+                                for (int i = 0; i < 13; i++) { // set to false
+                                    weeks[i] = false;
+                                }
                                 if(index > -1 && index < 13) {
                                     weeks[index] = true;
+                                    System.out.println(this + " is mentioned " + index+1 + " week.");
                                 }
                             } else {
                                 for (int i = 0; i + 1 < weekByWeek.length; i++) {
@@ -268,8 +273,8 @@ public final class Subject {
         return "\"weeks\": [" + semicolonedWeeks() + "]";
     }
     
-    private String parseAttributes(JsonObject courseJson) {
-        courseJson.addProperty("id", hashCode());
+    private String parseAttributes(JsonObject courseJson, int weekIndex) {
+        courseJson.addProperty("id", hashCode() + weekIndex);
         courseJson.addProperty("name", name);
         courseJson.addProperty("linkToSubject", linkToSubject);
         courseJson.addProperty("room", room.getName());
@@ -281,7 +286,7 @@ public final class Subject {
         courseJson.addProperty("color", color);
 
         return ""
-                + parseToJson("id", hashCode()) + ",\n"
+                + parseToJson("id", hashCode() + weekIndex) + ",\n"
                 + parseToJson("name", name) + ",\n"
                 + parseToJson("linkToSubject", linkToSubject) + ",\n"
                 + parseToJson("room", room.getName())+ ",\n"
@@ -300,10 +305,11 @@ public final class Subject {
                 + "}\n";
     }
     
-    public  JsonObject toJson() {
-        JsonObject courseJson = new JsonObject();
+    public JsonArray toJson() {
+        //JsonObject courseJson = new JsonObject();
+        JsonArray jsonArray = new JsonArray();
 
-        String tmp = parseAttributes(courseJson); // it is always same
+        String tmp; // it is always same
         String finalJson = "", actualJson = "";
         Date begginingOfSemester = null;
         Calendar c = Calendar.getInstance();
@@ -324,6 +330,8 @@ public final class Subject {
         
         for (int i = 0; i <= lastIndex; i++) {
             if(weeks[i]) { // subject is mentioned this week
+                JsonObject courseJson = new JsonObject();
+                tmp = parseAttributes(courseJson, i);
                 c.setTime(begginingOfSemester);
                 c.add(Calendar.DAY_OF_MONTH, i*7 + day.value()-1);
 
@@ -332,6 +340,7 @@ public final class Subject {
                 courseJson.addProperty("dayOfMonth", c.get(Calendar.DAY_OF_MONTH));
                 courseJson.addProperty("month", c.get(Calendar.MONTH));
                 courseJson.addProperty("year", c.get(Calendar.YEAR));
+                jsonArray.add(courseJson);
 
                 actualJson += parseToJson("dayOfMonth", c.get(Calendar.DAY_OF_MONTH)) + ",\n";
                 actualJson += parseToJson("month", c.get(Calendar.MONTH)) + ",\n";
@@ -343,7 +352,8 @@ public final class Subject {
             }
             actualJson = "";            
         }
-        return courseJson;
+        //return courseJson;
+        return jsonArray;
         
         //return finalJson;
     }

@@ -3,6 +3,8 @@ package com.tam.fittimetable.backend.core.data;
 import android.content.Context;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 import com.tam.fittimetable.backend.core.extract.Extractor;
@@ -34,6 +36,7 @@ public class SubjectManager implements Callable<Boolean> {
     private static SubjectManager manager = null;
     private final List<Subject> subjects;
     private List<Date> dates; // dates of semester , index 0: start of winter semester, 1 end of winter semester, 2/3 start/end
+    public static JsonArray json;
 
     public void SubjectManager(){
 
@@ -72,6 +75,18 @@ public class SubjectManager implements Callable<Boolean> {
         Collections.sort(daysubjects, new TimeComparator());
 
         return daysubjects;
+    }
+
+    public JsonArray getJson() throws IOException {
+        String json = "";
+        JsonArray allCoursesJson = new JsonArray();
+        int counter = 0;
+        for(Subject s : getSubjects()) {
+            for(JsonElement jsonElement : s.toJson())
+                allCoursesJson.add(jsonElement);
+        }
+
+        return allCoursesJson;
     }
     
     public JsonArray getJson(Context context) throws IOException {
@@ -146,10 +161,10 @@ public class SubjectManager implements Callable<Boolean> {
             SimpleDateFormat constatntFormatter = new SimpleDateFormat(Strings.DATE_FORMAT_DD_MM_YYYY);
             Date actual = new Date();
             Date summerHolidays, winterHolidays;
-            System.out.println("Actual date: " + actual);
+            //System.out.println("Actual date: " + actual);
             summerHolidays = constatntFormatter.parse(Strings.MIDDLE_OF_YEAR_DD_MM_ + actual.toString().trim().split(" ")[5]);
             winterHolidays = constatntFormatter.parse(Strings.END_OF_YEAR_DD_MM_ + actual.toString().trim().split(" ")[5]);
-            
+
             Date tmp1, tmp2;
             if (actual.compareTo(summerHolidays) >= 0) { // winter semster
                 for (Date d : dates) {
@@ -234,6 +249,7 @@ public class SubjectManager implements Callable<Boolean> {
         dates = Extractor.selectDatesOfSemesters();
         Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
         extractor.parse();
+        json = getJson();
         success = true;
 
         running = false;

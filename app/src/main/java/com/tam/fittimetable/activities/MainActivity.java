@@ -113,8 +113,11 @@ public class MainActivity extends AppCompatActivity {
            /*for (Subject s : SubjectManager.get().getSubjects()) {
                System.out.println(s);
            }*/
-           JsonArray jsonData = SubjectManager.get().getJson(this);
-            System.out.println(jsonData.toString());
+           //JsonArray jsonData = SubjectManager.get().getJson(this);
+           JsonArray jsonData = SubjectManager.json;
+           FileOutputStream fileOutputStream = this.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
+           fileOutputStream.write(jsonData.toString().getBytes());
+           System.out.println(jsonData.toString());
 
 
            //SubjectManager.get().getSubjects();
