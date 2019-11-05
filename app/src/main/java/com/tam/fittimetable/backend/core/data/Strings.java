@@ -30,10 +30,13 @@ public class Strings {
     public static final String DATE_FORMAT = "dd. MMM yyyy";
     public static final String DATE_FORMAT_ACADEMIC = "dd MMM yyyy";
 
+    public static final String DATE_FORMAT_DD_MM_YYYY = "dd-MM-yyyy";
     public static final String DATE_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";
     public static final String MIDDLE_OF_YEAR = "20. July ";
+    public static final String MIDDLE_OF_YEAR_DD_MM_ = "20-07-";
     public static final String BEGGINING_OF_YEAR = "1. January ";
     public static final String END_OF_YEAR = "31. December ";
+    public static final String END_OF_YEAR_DD_MM_ = "31-12-";
 
     public static final String ALL_SEMESTER_EDUCATION = "lectures"; // field is written if subject is mentioned for whole semester
 

@@ -143,10 +143,13 @@ public class SubjectManager implements Callable<Boolean> {
         try {
             List<Date> semester = new ArrayList<>();
             SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT);
+            SimpleDateFormat constatntFormatter = new SimpleDateFormat(Strings.DATE_FORMAT_DD_MM_YYYY);
             Date actual = new Date();
-            Date summerHolidays = formatter.parse(Strings.MIDDLE_OF_YEAR + actual.toString().trim().split(" ")[5]);
-            Date winterHolidays = formatter.parse(Strings.END_OF_YEAR + actual.toString().trim().split(" ")[5]);
-
+            Date summerHolidays, winterHolidays;
+            System.out.println("Actual date: " + actual);
+            summerHolidays = constatntFormatter.parse(Strings.MIDDLE_OF_YEAR_DD_MM_ + actual.toString().trim().split(" ")[5]);
+            winterHolidays = constatntFormatter.parse(Strings.END_OF_YEAR_DD_MM_ + actual.toString().trim().split(" ")[5]);
+            
             Date tmp1, tmp2;
             if (actual.compareTo(summerHolidays) >= 0) { // winter semster
                 for (Date d : dates) {
