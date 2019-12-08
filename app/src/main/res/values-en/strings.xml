@@ -30,7 +30,7 @@
     <string name="succesfully_loaded">Successfully loaded.</string>
     <string name="message_delete_course">Do you really want to remove the course?</string>
     <string name="message_course_deleted">Course was successfully removed</string>
-    <string name="message_course_non_deleted">Courses could not be deleted</string>
+    <string name="message_course_non_deleted">Course could not be removed</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="room">Room</string>
