@@ -22,4 +22,7 @@
     <string name="message_error_network_connection">Síťové připojení není k dispozici</string>
     <string name="login">Přihlásit se</string>
     <string name="aktualizovat_z_wisu">Aktualizovat z wisu</string>
+    <string name="trying_to_login">Přihlašování...</string>
+    <string name="uncorrect_login">Nesprávné jméno nebo heslo! Vyplňte prosím znova.</string>
+    <string name="loading_courses">Načítám předměty ...</string>
 </resources>

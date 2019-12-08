@@ -22,4 +22,7 @@
     <string name="message_error_network_connection">Network connection is not available</string>
     <string name="login">Log in</string>
     <string name="aktualizovat_z_wisu">Actualize from wis</string>
+    <string name="trying_to_login">Trying to log in...</string>
+    <string name="uncorrect_login">Incorrect name or password! Please, try again.</string>
+    <string name="loading_courses">Loading courses ...</string>
 </resources>

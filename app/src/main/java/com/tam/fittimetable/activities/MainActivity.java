@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         // setting progressing bar
         mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Přihlašování..."); // Progress dialog message
+        mProgressDialog.setMessage(this.getString(R.string.trying_to_login));
 
         String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                 final Intent intent = new Intent(mainActivity, StaticActivity.class);
                 startActivity(intent);
             } else {
-                new AlertDialog.Builder(mainActivity).setMessage("Nesprávné jméno nebo heslo!").setCancelable(true)
+                new AlertDialog.Builder(mainActivity).setMessage(R.string.uncorrect_login).setCancelable(true)
                         .setPositiveButton("OK", null)
                         .show();
             }

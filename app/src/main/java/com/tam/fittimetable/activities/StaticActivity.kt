@@ -61,7 +61,7 @@ class StaticActivity : AppCompatActivity() {
     private val progressDialog: ProgressDialog by lazy {
         ProgressDialog(this).apply {
             setCancelable(false)
-            setMessage("Načítám předměty ...")
+            setMessage(getString(R.string.loading_courses))
         }
     }
 

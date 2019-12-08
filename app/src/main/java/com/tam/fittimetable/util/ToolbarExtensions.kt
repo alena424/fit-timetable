@@ -110,7 +110,7 @@ fun Toolbar.setupWithWeekView(weekView: WeekView<*>) {
 
     val isRootActivity = activity.isTaskRoot
     if (!isRootActivity) {
-        setNavigationIcon(R.drawable.ic_menu_white_24dp)
+        //setNavigationIcon(R.drawable.ic_menu_white_24dp)
         //setNavigationOnClickListener { activity.onBackPressed() }
     }
 }
