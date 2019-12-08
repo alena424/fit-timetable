@@ -253,6 +253,10 @@ public class Downloader {
         File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
         if (f.exists()) {
             if (f.isDirectory()) {
+                for (File file : f.listFiles()) {
+                    file.delete();
+                    System.out.println("Deleted: " + file);
+                }
                 f.delete();
             }
         }
