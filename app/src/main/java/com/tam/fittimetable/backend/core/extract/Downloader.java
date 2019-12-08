@@ -115,7 +115,7 @@ public class Downloader {
                 writer.write(line);
             }
             writer.close();
-            autheticatorSet = true; // povedlo se
+           // autheticatorSet = true; // povedlo se
             Authenticator.setDefault(new FITAuthenticator());
             return f;
             //File file = new File(storeTo);

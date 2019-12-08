@@ -2,15 +2,17 @@ package com.tam.fittimetable.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,80 +24,94 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.JsonArray;
 import com.tam.fittimetable.R;
 import com.tam.fittimetable.backend.core.data.Strings;
-import com.tam.fittimetable.backend.core.data.Subject;
 import com.tam.fittimetable.backend.core.data.SubjectManager;
-import com.tam.fittimetable.backend.core.extract.AsyncCaller;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+
 
 import static com.tam.fittimetable.util.ExtensionsKt.showToast;
 
 
 public class MainActivity extends AppCompatActivity {
-    private Button button;
+    private Button loginButton;
 
-
+    ProgressDialog mProgressDialog;
+    MainActivity mainActivity;
+    Boolean isLogIn;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // if there already data, we dont have to sign up again, we can directly go to timetable
+        /*FileInputStream fin = null;
+        try {
+            fin = openFileInput(Strings.FILE_NAME);
+
+            if (fin.available() != 0){
+                // file is not empty, we can show timetable
+                final Intent intent = new Intent(this, StaticActivity.class);
+                startActivity(intent);
+            }
+            fin.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File was not found");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        // variables need to synchronized
+        mainActivity = this;
+        isLogIn = false;
+        //---
+
         setContentView(R.layout.login_layout);
-        button = (Button) findViewById(R.id.login);
+        loginButton = (Button) findViewById(R.id.login);
         LinearLayout myLayout = (LinearLayout) this.findViewById(R.id.loginLayout);
         myLayout.requestFocus();
 
-        String release = Build.VERSION.RELEASE;
-        int sdkVersion = Build.VERSION.SDK_INT;
-
-        EditText nameEdit = findViewById(R.id.loginName);
-        EditText passwordEdit = findViewById(R.id.passwordId);
-
-        if ( System.getProperty("login") != null ){
-            nameEdit.setText(System.getProperty("login"));
-        }
-        if ( System.getProperty("password") != null ){
-            passwordEdit.setText(System.getProperty("password"));
-        }
-
         Downloader.setMyContext(this);
         Downloader.recreateDir();
+        setLogin();
+
+        // setting progressing bar
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("Přihlašování..."); // Progress dialog message
 
         String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-System.out.println(Build.VERSION.SDK_INT);
+        // this is for lower versions
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
             requestPermissions(permissions, Strings.WRITE_REQUEST_CODE);
         } else {
             updateAndroidSecurityProvider(this);
         }
 
-        //new AsyncCaller().execute();
-
-        button.setOnClickListener(new View.OnClickListener() {
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openActivity2();
-
-
+                signUpToSystem();
             }
         });
     }
 
+
+    /**
+     * Method creates security provider - just for lower version, solves problem with bad protocol
+     * @param callingActivity
+     */
     private void updateAndroidSecurityProvider(Activity callingActivity) {
         try {
             ProviderInstaller.installIfNeeded(this);
@@ -108,98 +124,167 @@ System.out.println(Build.VERSION.SDK_INT);
         }
     }
 
-   public void openActivity2(){
+    private void saveLoginToFile(String name, String password){
+        FileOutputStream fos = null;
+        try {
+            fos = this.openFileOutput(Strings.LOGIN_FILE_NAME, MODE_PRIVATE);
+            String txt = name.concat(",").concat(password);
+            fos.write(txt.getBytes());
+            System.out.println("Write sucessfully " + txt);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null){
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Method tries to sign up to wis calling asynchronious futuretask
+     */
+   public void signUpToSystem(){
        EditText nameEdit = findViewById(R.id.loginName);
        EditText passwordEdit = findViewById(R.id.passwordId);
 
-       String name = String.valueOf(nameEdit.getText());
-       String password = String.valueOf(passwordEdit.getText());
-
-      // SubjectManager courses = SubjectManager.get();
-      // InputStream caInput = this.getResources().openRawResource(R.raw.fitcacert);
-      // for (Subject course: SubjectManager.get().getSubjects()
-           // ) {
-           //System.out.println(course.toJson());
-       //}
-
-      System.out.println(name +" tadz je heslo "+ name + " " +password);
-
-       final Intent intent = new Intent(this, StaticActivity.class);
-       ExecutorService es = Executors.newSingleThreadExecutor();
+       String name = String.valueOf(nameEdit.getText()).trim();
+       String password = String.valueOf(passwordEdit.getText()).trim();
        Downloader.setAuth(name,password);
-       System.setProperty("login", name);
-       System.setProperty("password", password);
-       FileOutputStream fos = null;
 
        try {
-          // SubjectManager manager = new SubjectManager();
-
-           Future future = es.submit(new SubjectManager().get());
-           es.awaitTermination(5, TimeUnit.SECONDS);
-           future.get(); // status of task
-         //  System.out.println("result je " +result);
-           /*for (Subject s : SubjectManager.get().getSubjects()) {
-               System.out.println(s);
-           }*/
-           //JsonArray jsonData = SubjectManager.get().getJson(this);
-           JsonArray jsonData = SubjectManager.json;
-           FileOutputStream fileOutputStream = this.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
-           fileOutputStream.write(jsonData.toString().getBytes());
-           System.out.println(jsonData.toString());
-
-
-           //SubjectManager.get().getSubjects();
-
-           showToast(this,"Úspěšně přihlášen");
-           System.setProperty("login", name);
-           System.setProperty("password", password);
-
-           //new AsyncCaller().execute();
-
-           startActivity(intent);
-       } catch (IOException e) {
-           e.printStackTrace();
-           showToast(this,e.getMessage());
+           SubjectManager sm = new SubjectManager();
+           ExecutorService executor = Executors.newSingleThreadExecutor();
+           FutureTasks futureTask = new FutureTasks();
+           futureTask.execute(executor.submit(sm.get()));
+           saveLoginToFile(name, password);
        } catch (ParseException e) {
            e.printStackTrace();
-           showToast(this,e.getMessage());
-
-       } catch (InterruptedException e) {
+       } catch (DownloadException e) {
            e.printStackTrace();
-           showToast(this,e.getMessage());
-       } catch (ExecutionException e) {
-           e.printStackTrace();
-           showToast(this,e.getMessage());
-       } finally {
-           if (fos != null){
-               try {
-                   fos.close();
-               } catch (IOException e) {
-                   e.printStackTrace();
-               }
-           }
        }
-       //showToast(this,"FAIL");
-
-       //   while (SubjectManager.get().running);
-
-      // System.out.println(SubjectManager.get().getJson());
 
     }
+
+    /**
+     * Method sets login and password from login.txt
+     */
+    private void setLogin(){
+        EditText nameEdit = findViewById(R.id.loginName);
+        EditText passwordEdit = findViewById(R.id.passwordId);
+
+        String savedLogin = "";
+        String savedPass = "";
+        InputStream is = null;
+        try {
+            is = getAssets().open(Strings.LOGIN_FILE_NAME);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+
+            String text = new String(buffer);
+            String[] token = text.split(",");
+            if ( token.length == 2 ) {
+                savedLogin = token[0];
+                savedPass = token[1];
+            }
+            is.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        nameEdit.setText(savedLogin);
+        passwordEdit.setText(savedPass);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case Strings.WRITE_REQUEST_CODE:
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     //Granted.
-
                     System.out.println("Garantovany pristup");
-
                 }
                 else{
                     //Denied.
                 }
                 break;
         }
+    }
+
+    public class FutureTasks extends AsyncTask<Future<Boolean>, Void, Void> {
+
+        Boolean loginSuccessful = false;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressDialog.show();
+            System.out.println("Start ");
+        }
+
+        @Override
+        protected Void doInBackground(Future<Boolean>... params) {
+
+            loginSuccessful = false;
+
+            System.out.println("Downloading in progress");
+            Future<Boolean> f = params[0];
+
+            FileOutputStream fos = null;
+            try {
+                f.get();
+                JsonArray jsonData = SubjectManager.json;
+
+            fos = openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
+            fos.write(jsonData.toString().getBytes());
+            System.out.println(jsonData.toString());
+            loginSuccessful = true;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }  catch (InterruptedException e) {
+                e.printStackTrace();
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+
+            } finally {
+                if (fos != null){
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            mProgressDialog.dismiss();
+            isLogIn = loginSuccessful;
+            System.out.println("End of downloading");
+            if (loginSuccessful) {
+                final Intent intent = new Intent(mainActivity, StaticActivity.class);
+                startActivity(intent);
+            } else {
+                new AlertDialog.Builder(mainActivity).setMessage("Nesprávné jméno nebo heslo!").setCancelable(true)
+                        .setPositiveButton("OK", null)
+                .show();
+            }
+
+
+        }
+
     }
 }

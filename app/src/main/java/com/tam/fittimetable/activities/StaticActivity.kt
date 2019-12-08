@@ -1,6 +1,7 @@
 package com.tam.fittimetable.activities
 
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +16,7 @@ import com.tam.fittimetable.data.EventsApi
 import com.tam.fittimetable.data.EventsDatabase
 import com.tam.fittimetable.data.FakeEventsApi
 import com.tam.fittimetable.data.FakeEventsDatabase
-import com.tam.fittimetable.util.lazyView
-import com.tam.fittimetable.util.setupWithWeekView
-import com.tam.fittimetable.util.showToast
+import com.tam.fittimetable.util.*
 import kotlinx.android.synthetic.main.activity_static.*
 import kotlinx.android.synthetic.main.view_toolbar.*
 import java.text.DateFormat
@@ -89,18 +88,29 @@ class StaticActivity : AppCompatActivity() {
         })
 
         weekView.setOnEventClickListener { event, _ ->
-            viewModel.remove(event)
-            showToast("Removed ${event.title}")
+            showToast("${event.title}\n" +
+                    "Místnost: ${event.place}\n" +
+                    "ID: ${event.id}")
         }
 
         weekView.setOnEventLongClickListener { event, _ ->
-            showToast("Long-clicked ${event.title}")
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Opravdu si přejete odstranit předmět?")
+            builder.setPositiveButton("ANO") { dialog, which ->
+                viewModel.remove(event)
+                showToast( "Předmět byl smazán")
+
+            }
+
+            builder.setNegativeButton("NE", null)
+            builder.show()
         }
 
         weekView.setOnEmptyViewLongClickListener { time ->
             val sdf = SimpleDateFormat.getDateTimeInstance()
             showToast("Empty view clicked at ${sdf.format(time.time)}")
         }
+
 
         weekView.onRangeChangeListener = object : OnRangeChangeListener {
             override fun onRangeChanged(
@@ -151,6 +161,9 @@ class StaticActivity : AppCompatActivity() {
 
             }
         }
+    }
+    override fun onBackPressed() {
+        moveTaskToBack(true)
     }
 
 

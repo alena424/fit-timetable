@@ -22,4 +22,7 @@
     <string name="export_google">Export do google kalendáře</string>
     <string name="signout_string">Odhlásit se</string>
     <string name="action_five_day_view">Pětidenní pohled</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="aktualizovat_z_wisu">Aktualizovat z wisu</string>
 </resources>
