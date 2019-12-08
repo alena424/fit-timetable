@@ -28,4 +28,10 @@
     <string name="downloading_courses_from_wis">Stahování předmětů z osobního rozvrhu ...</string>
     <string name="message_fail_synchronize">Nepovedlo se synchronizovat data z wisu. Zkuste se prosím přihlásit.</string>
     <string name="succesfully_loaded">Data úspěšně načtena z wisu.</string>
+    <string name="message_delete_course">Opravdu si přejete odstranit předmět?</string>
+    <string name="message_course_deleted">Předmět byl smazán</string>
+    <string name="message_course_non_deleted">Předmět nemohl být smazán.</string>
+    <string name="yes">ANO</string>
+    <string name="no">NE</string>
+    <string name="room">Místnost</string>
 </resources>

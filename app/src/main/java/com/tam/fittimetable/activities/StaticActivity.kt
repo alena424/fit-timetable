@@ -12,6 +12,7 @@ import com.alamkanak.weekview.OnRangeChangeListener
 import com.alamkanak.weekview.WeekView
 import com.tam.fittimetable.R
 import com.tam.fittimetable.apicient.ApiEvent
+import com.tam.fittimetable.backend.core.data.SubjectManager
 import com.tam.fittimetable.data.EventsApi
 import com.tam.fittimetable.data.EventsDatabase
 import com.tam.fittimetable.data.FakeEventsApi
@@ -43,6 +44,7 @@ private class AsyncViewModel(
     }
 
     fun remove(event: ApiEvent) {
+
         val allEvents = viewState.value?.events ?: return
         viewState.value = AsyncViewState(events = allEvents.minus(event))
     }
@@ -89,20 +91,26 @@ class StaticActivity : AppCompatActivity() {
 
         weekView.setOnEventClickListener { event, _ ->
             showToast("${event.title}\n" +
-                    "Místnost: ${event.place}\n" +
-                    "ID: ${event.id}")
+                    getString(R.string.room)+": ${event.place}\n" +
+                    getString(R.string.mess_id) +": ${event.id}")
         }
 
         weekView.setOnEventLongClickListener { event, _ ->
             val builder = AlertDialog.Builder(this)
-            builder.setMessage("Opravdu si přejete odstranit předmět?")
-            builder.setPositiveButton("ANO") { dialog, which ->
-                viewModel.remove(event)
-                showToast( "Předmět byl smazán")
+            builder.setMessage(getString(R.string.message_delete_course))
+            builder.setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                var success = SubjectManager.removeSubject(this, event.id.toString())
+                if ( success){
+                    viewModel.remove(event)
+                    showToast( getString(R.string.message_course_deleted))
+                } else {
+                    showToast( getString(R.string.message_course_non_deleted))
+                }
+
 
             }
 
-            builder.setNegativeButton("NE", null)
+            builder.setNegativeButton(getString(R.string.no), null)
             builder.show()
         }
 

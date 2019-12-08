@@ -9,9 +9,16 @@ import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 import com.tam.fittimetable.backend.core.extract.Extractor;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,6 +94,51 @@ public class SubjectManager implements Callable<Boolean> {
         }
 
         return allCoursesJson;
+    }
+
+    public static boolean removeSubject(Context context, String subjectId){
+        FileInputStream inputStream = null;
+        boolean success = false;
+        try {
+        inputStream = context.openFileInput(Strings.FILE_NAME);
+        if ( inputStream != null ) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while (true) {
+                    if (!((receiveString = bufferedReader.readLine()) != null)) break;
+
+                stringBuilder.append(receiveString);
+            }
+            String jsonString = stringBuilder.toString();
+            JSONArray jsonArray = new JSONArray(jsonString);
+            JSONObject obj = null;
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                String foundSubjectId = jsonArray.getJSONObject(i).getString("id");
+                if (subjectId.equals(foundSubjectId)){
+                    obj = jsonArray.getJSONObject(i);
+                    System.out.println("Found and removed: " + obj);
+                    jsonArray.remove(i);
+                    success = true;
+                    break;
+                }
+            }
+            // rewrite the file again to json
+            FileOutputStream fos = null;
+            fos = context.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
+            fos.write(jsonArray.toString().getBytes());
+
+        }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return success;
+
     }
     
     public JsonArray getJson(Context context) throws IOException {
