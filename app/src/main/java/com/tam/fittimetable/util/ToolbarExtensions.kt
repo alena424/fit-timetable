@@ -263,7 +263,8 @@ private class SynchronizeAsyncTask(private val activity: StaticActivity) : Async
                 savedLogin = token[0]
                 savedPass = token[1]
             }
-
+            Downloader.setMyContext(activity)
+            Downloader.recreateDir()
             Downloader.setAuth(savedLogin, savedPass)
             val sm = SubjectManager.get()
             val es = Executors.newSingleThreadExecutor()
