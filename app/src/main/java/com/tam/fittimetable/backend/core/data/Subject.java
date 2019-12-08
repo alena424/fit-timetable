@@ -1,9 +1,13 @@
 package com.tam.fittimetable.backend.core.data;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -13,13 +17,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+
 /**
- *
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
  */
 public final class Subject {
 
-    enum Day {
+    public enum Day {
         MONDAY("Monday", 1, "Mon"),
         TUESDAY("Tuesday", 2, "Tue"),
         WEDNESDAY("Wednesday", 3, "Wed"),
@@ -74,6 +78,16 @@ public final class Subject {
     }
 
     /**
+     * Sets week at index to value
+     * @param index
+     */
+    public void setWeeksOfMentoring(int index, boolean value){
+        if (index >= 0 && index < 12) {
+            weeks[index] = value;
+        }
+    }
+
+    /**
      * Downloads file with subject card and extracts its mentoring weeks if
      * there is some special events listed in table with color #ffffdc which
      * means something really special like an exam, so we will check this events
@@ -82,7 +96,7 @@ public final class Subject {
      */
     public void setWeeksOfMentoring() throws ParseException {
         try {
-            Document doc = Jsoup.parse(Downloader.download(linkToSubject, Strings.SUBJECT_CARD_FILE), "ISO-8859-2");
+            Document doc = Jsoup.parse(Downloader.download(linkToSubject, Strings.SUBJECT_CARD_FILE + name, true), "ISO-8859-2");
             if (doc.select("table").isEmpty()) { // there is no table with info, so it is mentioned for all weeks
                 for (int i = 0; i < 13; i++) {
                     weeks[i] = true;
@@ -129,8 +143,12 @@ public final class Subject {
                                 SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_YYYY_MM_DD);
                                 Date date = formatter.parse(weekByWeek[0].trim());
                                 int index = SubjectManager.get().getWeekOfSemester(date);
+                                for (int i = 0; i < 13; i++) { // set to false
+                                    weeks[i] = false;
+                                }
                                 if(index > -1 && index < 13) {
                                     weeks[index] = true;
+                                    System.out.println(this + " is mentioned " + index+1 + " week.");
                                 }
                             } else {
                                 for (int i = 0; i + 1 < weekByWeek.length; i++) {
@@ -181,9 +199,7 @@ public final class Subject {
     }
 
     /**
-     *
      * @param week number of week (from 1 to 13)
-     * @return
      */
     public boolean isMentioned(int week) {
         if(week < 1 || week > 13) {
@@ -258,15 +274,27 @@ public final class Subject {
     }
     
     private String parseToJson(String arg, int value) {
-        return "\"" + arg + "\": \"" + value + "\"";
+        return "\"" + arg + "\": " + value ;
     }
     
     private String getMentionedWeeksInJson() {
         return "\"weeks\": [" + semicolonedWeeks() + "]";
     }
     
-    public String toJson() {
-        return "{\n" 
+    private String parseAttributes(JsonObject courseJson, int weekIndex) {
+        courseJson.addProperty("id", hashCode() + weekIndex);
+        courseJson.addProperty("name", name);
+        courseJson.addProperty("linkToSubject", linkToSubject);
+        courseJson.addProperty("room", room.getName());
+        courseJson.addProperty("from", from);
+        courseJson.addProperty("startTime", from + ":00");
+        courseJson.addProperty("to", to);
+        courseJson.addProperty("endTime", to + ":00");
+        courseJson.addProperty("day", day.shortCut());
+        courseJson.addProperty("color", color);
+
+        return ""
+                + parseToJson("id", hashCode() + weekIndex) + ",\n"
                 + parseToJson("name", name) + ",\n"
                 + parseToJson("linkToSubject", linkToSubject) + ",\n"
                 + parseToJson("room", room.getName())+ ",\n"
@@ -276,8 +304,66 @@ public final class Subject {
                 + parseToJson("endTime", to + ":00")+ ",\n"
                 + parseToJson("day", day.shortCut())+ ",\n"
                 + parseToJson("color", color)+ ",\n"
-                + getMentionedWeeksInJson()+ "\n"
+                + getMentionedWeeksInJson()+ "";
+    }
+    
+    private String packJsonObject(String obj) {
+        return "{\n"
+                + obj
                 + "}\n";
+    }
+    
+    public JsonArray toJson() {
+        //JsonObject courseJson = new JsonObject();
+        JsonArray jsonArray = new JsonArray();
+
+        String tmp; // it is always same
+        String finalJson = "", actualJson = "";
+        Date begginingOfSemester = null;
+        Calendar c = Calendar.getInstance();
+        
+        try {
+            begginingOfSemester = SubjectManager.get().actualSemester().get(0);
+        } catch (ParseException | DownloadException ex) {
+            Logger.getLogger(Subject.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
+        int lastIndex = 0; // last index of true
+        for (int i = 0; i < 13; i++) {
+            if(weeks[i]) {
+                lastIndex = i;
+            }
+        }
+        
+        for (int i = 0; i <= lastIndex; i++) {
+            if(weeks[i]) { // subject is mentioned this week
+                JsonObject courseJson = new JsonObject();
+                tmp = parseAttributes(courseJson, i);
+                c.setTime(begginingOfSemester);
+                c.add(Calendar.DAY_OF_MONTH, i*7 + day.value()-1);
+
+
+                actualJson += tmp + ",\n";
+                courseJson.addProperty("dayOfMonth", c.get(Calendar.DAY_OF_MONTH));
+                courseJson.addProperty("month", c.get(Calendar.MONTH));
+                courseJson.addProperty("year", c.get(Calendar.YEAR));
+                jsonArray.add(courseJson);
+
+                actualJson += parseToJson("dayOfMonth", c.get(Calendar.DAY_OF_MONTH)) + ",\n";
+                actualJson += parseToJson("month", c.get(Calendar.MONTH)) + ",\n";
+                actualJson += parseToJson("year", c.get(Calendar.YEAR)) + "\n";
+                finalJson += packJsonObject(actualJson);
+                if(i != lastIndex) { //if it is last record does not make ,
+                    finalJson += ",\n";
+                }                
+            }
+            actualJson = "";            
+        }
+        //return courseJson;
+        return jsonArray;
+        
+        //return finalJson;
     }
 
     public void setDay(String day) {
@@ -348,5 +434,4 @@ public final class Subject {
         }
         return true;
     }
-
 }

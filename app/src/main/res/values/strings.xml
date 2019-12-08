@@ -1,24 +1,38 @@
 <resources>
-    <string name="app_name">FitTimetable</string>
-    <string name="signup">SIGN UP</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="action_today">Dnes</string>
-    <string name="action_day_view">Denní pohled</string>
-    <string name="action_three_day_view">Třídenní pohled</string>
-    <string name="action_week_view">Týdenní pohled</string>
-    <string name="async_error">Could not download events from the internet</string>
-    <string name="five_days_view">Pětidenní pohled</string>
-
-
-    <string name="week_view">FIT Timetable</string>
-    <string name="title_activity_legacy">Legacy</string>
-    <string name="title_activity_static">Static Week</string>
-    <string name="title_activity_limited">Limited Date and Time Range</string>
-    <string name="date_infos">Od %1$s do %2$s</string>
-    <string name="settings_string">Nastavení</string>
-    <string name="export_google">Export do google kalendáře</string>
-    <string name="signout_string">Odhlásit se</string>
+    <string name="app_name">FIT Timetable</string>
+    <string name="organisation_name">VUT FIT TAMa</string>
+    <string name="action_today">Today</string>
+    <string name="action_day_view">Daily view</string>
+    <string name="action_three_day_view">Three-day view</string>
+    <string name="action_week_view">Weekly view</string>
+    <string name="date_infos">From %1$s to %2$s</string>
+    <string name="settings_string">Settings</string>
+    <string name="export">Export to .ics file</string>
+    <string name="signout_string">Log out</string>
+    <string name="action_five_day_view">Five-day view</string>
+    <string name="message_exporting">Exporting courses…</string>
+    <string name="message_export_success">Courses have been successfully exported to file %1$s.</string>
+    <string name="message_export_failed">Exporting of courses failed.</string>
+    <string name="link_to_course_page">Link to the course page</string>
+    <string name="link_to_room">Link to the room</string>
+    <string name="link_to_map">Link to the map of a building</string>
+    <string name="message_login_successfull">You have been successfully logged in</string>
+    <string name="message_login_failed">Login failed</string>
+    <string name="message_error_network_connection">Network connection is not available</string>
+    <string name="login">Log in</string>
+    <string name="aktualizovat_z_wisu">Actualize from wis</string>
+    <string name="appwidget_text" translatable="false">App widget</string>
+    <string name="trying_to_login">Přihlašování...</string>
+    <string name="uncorrect_login">Nesprávné jméno nebo heslo!</string>
+    <string name="loading_courses">Načítám předměty ...</string>
+    <string name="succesfully_loaded">Successfully loaded</string>
+    <string name="downloading_courses_from_wis">Downloading courses from wis ...</string>
+    <string name="message_fail_synchronize">Synchronize failed, try to log in again.</string>
+    <string name="message_delete_course">Opravdu si přejete odstranit předmět?</string>
+    <string name="message_course_deleted">Předmět byl smazán</string>
+    <string name="message_course_non_deleted">Courses could not be deleted</string>
+    <string name="yes">ANO</string>
+    <string name="no">NE</string>
+    <string name="room">Místnost</string>
+    <string name="mess_id" translatable="false">ID</string>
 </resources>

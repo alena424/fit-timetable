@@ -1,10 +1,10 @@
 package com.tam.fittimetable.backend.core.data;
 
+
 /**
- *
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
  */
-class Room {
+public class Room {
     private final String name; // E112, D105, ...
 
     public Room(String name) {

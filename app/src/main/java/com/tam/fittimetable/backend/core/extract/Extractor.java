@@ -76,8 +76,14 @@ public class Extractor {
                         room = e.select("a").get(1).text();
 
                         //System.out.println(name + "|" + subjectLink + "|" + room + "|" + from + "|" + to + "|" + day + "|" + color + "|--> " + manager.getSubjects().size());
-                        manager.addSubject(name, getLinkToSubjectCard(subjectLink), room, from, to, day, color);
-                        manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();
+                        manager.addSubject(name, getLinkToSubjectCard(subjectLink, name), room, from, to, day, color);
+                        if (e.select("nobr").size() > 0) {
+                            SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_YYYY_MM_DD);
+                            int index = SubjectManager.get().getWeekOfSemester(formatter.parse(e.select("nobr").first().text()));
+                            manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring(index, true);
+                        } else {
+                            manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();
+                        }
                         from += colspan;
                     }
                 }
@@ -93,10 +99,11 @@ public class Extractor {
     /**
      *
      * @param link
+     * @param name name of subject for cache
      * @return
      */
-    private String getLinkToSubjectCard(String link) throws IOException {
-        Document doc = Jsoup.parse(Downloader.download(Strings.WEB_PREFIX + link, Strings.SUBJECT_PRIVATE_FILE), "ISO-8859-2");
+    private String getLinkToSubjectCard(String link, String name) throws IOException {
+        Document doc = Jsoup.parse(Downloader.download(Strings.WEB_PREFIX + link, Strings.SUBJECT_PRIVATE_FILE + name, true), "ISO-8859-2");
         Elements elms = doc.select("a"); // select a elemnts
 
         for (Element e : elms) {
@@ -111,7 +118,7 @@ public class Extractor {
     public static List<Date> selectDatesOfSemesters() throws ParseException {
         try {
             List<Date> dates = new ArrayList<Date>();
-            SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT);
+            SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_YYYY_MM_DD);
 
             Document doc;
             doc = Jsoup.parse(Downloader.download(Strings.ACADEMIC_YEAR, Strings.ACADEMIC_YEAR_FILE), "ISO-8859-2");
@@ -127,8 +134,8 @@ public class Extractor {
                     //    <time datetime="2019-12-20">20. December 2019</time>
                     //</span>
                     //but there are another blocks which pass (winter holiday...)
-                    Date d1 = formatter.parse(e.select("time").get(0).text());
-                    Date d2 = formatter.parse(e.select("time").get(1).text());
+                    Date d1 = formatter.parse(e.select("time").get(0).attr("datetime"));
+                    Date d2 = formatter.parse(e.select("time").get(1).attr("datetime"));
 
                     long diffInMillies = Math.abs(d2.getTime() - d1.getTime());
                     long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);

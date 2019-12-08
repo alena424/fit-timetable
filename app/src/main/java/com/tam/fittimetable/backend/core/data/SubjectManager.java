@@ -1,8 +1,24 @@
 package com.tam.fittimetable.backend.core.data;
 
+import android.content.Context;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 import com.tam.fittimetable.backend.core.extract.Extractor;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,26 +26,39 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  *
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
  */
-public class SubjectManager {
+public class SubjectManager implements Callable<Boolean> {
 
+    public boolean running = true;
     private static SubjectManager manager = null;
     private final List<Subject> subjects;
-    private final List<Date> dates; // dates of semester , index 0: start of winter semester, 1 end of winter semester, 2/3 start/end
+    private List<Date> dates; // dates of semester , index 0: start of winter semester, 1 end of winter semester, 2/3 start/end
+    public static JsonArray json;
+
+    public void SubjectManager(){
+
+    }
 
     public void addSubject(Subject s) {
         subjects.add(s);
     }
 
     public void addSubject(String name, String link, String room, int from, int to, String day, String color) {
-        subjects.add(new Subject(name, link, room, from, to, day, color));
+        //subjects.add(new Subject(name, link, room, from, to, day, color));
+        Subject s = new Subject(name, link, room, from, to, day, color);
+        if(!contains(s)) {
+            subjects.add(s);
+        }
     }
 
     public List<Subject> getSubjects() {
@@ -53,6 +82,87 @@ public class SubjectManager {
         Collections.sort(daysubjects, new TimeComparator());
 
         return daysubjects;
+    }
+
+    public JsonArray getJson() throws IOException {
+        String json = "";
+        JsonArray allCoursesJson = new JsonArray();
+        int counter = 0;
+        for(Subject s : getSubjects()) {
+            for(JsonElement jsonElement : s.toJson())
+                allCoursesJson.add(jsonElement);
+        }
+
+        return allCoursesJson;
+    }
+
+    public static boolean removeSubject(Context context, String subjectId){
+        FileInputStream inputStream = null;
+        boolean success = false;
+        try {
+        inputStream = context.openFileInput(Strings.FILE_NAME);
+        if ( inputStream != null ) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while (true) {
+                    if (!((receiveString = bufferedReader.readLine()) != null)) break;
+
+                stringBuilder.append(receiveString);
+            }
+            String jsonString = stringBuilder.toString();
+            JSONArray jsonArray = new JSONArray(jsonString);
+            JSONObject obj = null;
+            for (int i = 0; i < jsonArray.length(); i++)
+            {
+                String foundSubjectId = jsonArray.getJSONObject(i).getString("id");
+                if (subjectId.equals(foundSubjectId)){
+                    obj = jsonArray.getJSONObject(i);
+                    System.out.println("Found and removed: " + obj);
+                    jsonArray.remove(i);
+                    success = true;
+                    break;
+                }
+            }
+            // rewrite the file again to json
+            FileOutputStream fos = null;
+            fos = context.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
+            fos.write(jsonArray.toString().getBytes());
+
+        }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return success;
+
+    }
+    
+    public JsonArray getJson(Context context) throws IOException {
+        String json = "";
+        JsonArray allCoursesJson = new JsonArray();
+        int counter = 0;
+        for(Subject s : getSubjects()) {
+            json += s.toJson();
+            allCoursesJson.add(s.toJson());
+            
+            if(getSubjects().size() - 1 != counter) // last one -> do not make ,
+                json += ",\n";
+
+            counter++;
+        }
+        json = "[" + json + "]";
+
+        // ulozime si ho
+        FileOutputStream fos = null;
+        fos = context.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
+        fos.write(allCoursesJson.toString().getBytes());
+
+        return allCoursesJson;
+      //  return json;
     }
 
     /**
@@ -84,8 +194,8 @@ public class SubjectManager {
         if (manager == null) {
             manager = new SubjectManager();
 
-            Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
-            extractor.parse();
+            //Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
+            //extractor.parse();
         }
 
         return manager;
@@ -100,9 +210,12 @@ public class SubjectManager {
         try {
             List<Date> semester = new ArrayList<>();
             SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT);
+            SimpleDateFormat constatntFormatter = new SimpleDateFormat(Strings.DATE_FORMAT_DD_MM_YYYY);
             Date actual = new Date();
-            Date summerHolidays = formatter.parse(Strings.MIDDLE_OF_YEAR + actual.toString().trim().split(" ")[5]);
-            Date winterHolidays = formatter.parse(Strings.END_OF_YEAR + actual.toString().trim().split(" ")[5]);
+            Date summerHolidays, winterHolidays;
+            //System.out.println("Actual date: " + actual);
+            summerHolidays = constatntFormatter.parse(Strings.MIDDLE_OF_YEAR_DD_MM_ + actual.toString().trim().split(" ")[5]);
+            winterHolidays = constatntFormatter.parse(Strings.END_OF_YEAR_DD_MM_ + actual.toString().trim().split(" ")[5]);
 
             Date tmp1, tmp2;
             if (actual.compareTo(summerHolidays) >= 0) { // winter semster
@@ -175,9 +288,25 @@ public class SubjectManager {
         dates.add(new SimpleDateFormat(Strings.DATE_FORMAT).parse(date));
     }
 
-    private SubjectManager() throws ParseException, DownloadException {
+    public SubjectManager() throws ParseException, DownloadException {
         subjects = new ArrayList<Subject>();
+        //dates = Extractor.selectDatesOfSemesters();
+    }
+
+    @Override
+    public Boolean call() throws ParseException, IOException {
+        Boolean success = false;
+
+        running = true;
         dates = Extractor.selectDatesOfSemesters();
+        Extractor extractor = new Extractor(Downloader.download(Strings.PRIVATE_TIMETABLE_LINK, Strings.PRIVATE_TIMETABLE_FILE));
+        extractor.parse();
+        json = getJson();
+        success = true;
+
+        running = false;
+
+        return success;
     }
 
     private class TimeComparator implements Comparator<Subject> {

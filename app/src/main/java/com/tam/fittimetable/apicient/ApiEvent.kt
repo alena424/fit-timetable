@@ -18,8 +18,17 @@ data class ApiEvent(
     @SerializedName("name")
     var title: String,
     @Expose
+    @SerializedName("id")
+    var id: Long,
+    @Expose
     @SerializedName("dayOfMonth")
     var dayOfMonth: Int,
+    @Expose
+    @SerializedName("year")
+    var year: Int,
+    @Expose
+    @SerializedName("month")
+    var month: Int,
     @Expose
     @SerializedName("startTime")
     var startTime: String,
@@ -30,24 +39,26 @@ data class ApiEvent(
     @SerializedName("color")
     var color: String,
     @Expose
-    @SerializedName("location")
+    @SerializedName("room")
     var place: String
 ) : WeekViewDisplayable<ApiEvent> {
 
     override fun toWeekViewEvent(): WeekViewEvent<ApiEvent> {
         // Titles have the format "Event 123"
-        val id = title.split(" ").last().toLong()
+        //val id = title.split(" ").last().toLong()
+
 
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val start = checkNotNull(sdf.parse(startTime))
         val end = checkNotNull(sdf.parse(endTime))
 
         val now = Calendar.getInstance()
+        //dayOfMonth = dayOfMonth -1;
 
         val startTime = now.clone() as Calendar
         startTime.timeInMillis = start.time
-        startTime.set(Calendar.YEAR, now.get(Calendar.YEAR))
-        startTime.set(Calendar.MONTH, now.get(Calendar.MONTH))
+        startTime.set(Calendar.YEAR, year)
+        startTime.set(Calendar.MONTH, month)
         startTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
         val endTime = startTime.clone() as Calendar

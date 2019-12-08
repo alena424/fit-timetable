@@ -6,6 +6,7 @@ import android.os.AsyncTask
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.tam.fittimetable.apicient.ApiEvent
+import com.tam.fittimetable.backend.core.data.Strings
 import java.lang.Thread.sleep
 
 interface EventsApi {
@@ -23,8 +24,10 @@ class FakeEventsApi(
     ) {
         AsyncTask.execute {
             sleep(2_000)
-            val inputStream = context.assets.open("fitevents.json")
+          val inputStream = context.openFileInput(Strings.FILE_NAME)
+          //  val inputStream = context.assets.open("subjects.json")
             val json = inputStream.reader().readText()
+            //get()
 
             val activity = context as Activity
             activity.runOnUiThread {

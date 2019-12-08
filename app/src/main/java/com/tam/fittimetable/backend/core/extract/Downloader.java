@@ -3,6 +3,7 @@ package com.tam.fittimetable.backend.core.extract;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Environment;
 
 import com.tam.fittimetable.backend.FITTimetable;
 import com.tam.fittimetable.backend.core.data.Strings;
@@ -45,6 +46,13 @@ public class Downloader {
     private static boolean autheticatorSet = false;
     private static Context myContext = null;
     private static SSLContext sslContext = null;
+    private static String login = null;
+    private static String password = null;
+
+    public static void setAuth(String log, String pass){
+        login = log;
+        password = pass;
+    }
 
     public static void setMyContext(Context c) {
         myContext = c;
@@ -61,25 +69,35 @@ public class Downloader {
      * @param link
      * @return
      */
-    public static File download(String link, String storeTo) throws DownloadException {
+    public static File download(String link, String storeTo) throws IOException {
         URL url;
         InputStream is = null;
         BufferedReader br;
         String line;
 
+
         if (!autheticatorSet) {
             // Install Authenticator
             createFolders();
             setKeystore();
-            if(System.getProperty("login") == null) { // for testing set in Strings class
-                FITAuthenticator.setPasswordAuthentication(Strings.LOGIN, Strings.PASSWORD);
-            } else {
-                FITAuthenticator.setPasswordAuthentication(System.getProperty("login"), System.getProperty("password"));
-            }
+            //if(System.getProperty("login") == null) { // for testing set in Strings class
+            FITAuthenticator.setPasswordAuthentication(login, password);
+           // System.out.println("aaaaa " +login + " " + password);
+            /*if ( ! login.isEmpty() && ! password.isEmpty() ){
+                    System.out.println("aaaaa");
+                    FITAuthenticator.setPasswordAuthentication(login, password);
+                } else {
+                    FITAuthenticator.setPasswordAuthentication(Strings.LOGIN, Strings.PASSWORD);
+                }
 
-            Authenticator.setDefault(new FITAuthenticator());
-            autheticatorSet = true;
-        }
+            } else {
+                System.out.println(System.getProperties());
+                FITAuthenticator.setPasswordAuthentication(System.getProperty("login"), System.getProperty("password"));
+            }*/
+
+
+
+       }
 
         try {
             url = new URL(link);
@@ -88,14 +106,20 @@ public class Downloader {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             InputStream in = urlConnection.getInputStream();
             br = new BufferedReader(new InputStreamReader(in));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(storeTo)));
+            //File f = File.createTempFile(storeTo,"",Environment.getExternalStoragePublicDirectory(
+              //      Environment.DIRECTORY_PICTURES));
+            File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo );
+            System.out.println("Downloading file: " + f);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(f));
             while ((line = br.readLine()) != null) {
                 writer.write(line);
             }
             writer.close();
-
-            File file = new File(storeTo);
-            return file;
+           // autheticatorSet = true; // povedlo se
+            Authenticator.setDefault(new FITAuthenticator());
+            return f;
+            //File file = new File(storeTo);
+            //return file;
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
             throw new DownloadException("MalformedURLException exception: " + mue.getMessage() + "\n" + mue.getStackTrace());
@@ -108,8 +132,31 @@ public class Downloader {
                     is.close();
                 }
             } catch (IOException ioe) {
-
+                throw new IOException(ioe.getMessage());
             }
+        }
+    }
+
+    /**
+     * Downloads file with authentication
+     *
+     * @param storeTo
+     * @throws com.tam.fittimetable.backend.core.extract.DownloadException
+     *
+     * @param link
+     * @param checkExistence if it set to yes, it looks for existing file
+     * @return
+     */
+    public static File download(String link, String storeTo, Boolean checkExistence) throws IOException {
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo;
+        File loadeFile = new File(path);
+
+        if (loadeFile.exists() && checkExistence) {
+            System.out.println("Cache hit: " + path);
+            return loadeFile;
+        } else  { // it is like download new
+            System.out.println("Cache MISS: " + path);
+            return download(link, storeTo);
         }
     }
 
@@ -138,7 +185,7 @@ public class Downloader {
     }
 
     protected static void createFolders() {
-        File f = new File(Strings.DOWNLOAD);
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
         if(!f.isDirectory()) {
             f.mkdir();
         }
@@ -201,5 +248,16 @@ public class Downloader {
         } catch (KeyManagementException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void recreateDir() {
+        System.out.println("Recreating download dir at: " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
+        if (f.exists()) {
+            if (f.isDirectory()) {
+                f.delete();
+            }
+        }
+        f.mkdir();
     }
 }
