@@ -5,10 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
 
-import com.alamkanak.weekview.WeekView;
 import com.tam.fittimetable.R;
-import com.tam.fittimetable.apicient.ApiEvent;
-import com.tam.fittimetable.apicient.Event;
 
 /**
  * Implementation of App Widget functionality.

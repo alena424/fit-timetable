@@ -5,25 +5,25 @@ package com.tam.fittimetable.util
 
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
-import android.content.Context.MODE_PRIVATE
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.alamkanak.weekview.WeekView
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import com.tam.fittimetable.R
+import com.tam.fittimetable.activities.MainActivity
 import com.tam.fittimetable.activities.StaticActivity
+import com.tam.fittimetable.backend.core.data.Strings
 import com.tam.fittimetable.backend.core.data.Subject
 import com.tam.fittimetable.backend.core.data.SubjectManager
-import java.lang.Exception
-import java.util.*
-
-import com.tam.fittimetable.backend.core.data.Strings
 import com.tam.fittimetable.backend.core.extract.Downloader
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import java.io.*
+import java.util.*
 import java.util.concurrent.Executors
 
 enum class WeekViewType(val value: Int) {
@@ -59,6 +59,10 @@ fun Toolbar.setupWithWeekView(weekView: WeekView<*>) {
             }
             R.id.action_export -> {
                 ExportAsyncTask(activity).execute()
+                true
+            }
+            R.id.action_logout -> {
+                logout(activity)
                 true
             }
             else -> {
@@ -216,8 +220,6 @@ private class ExportAsyncTask(private val activity: StaticActivity) : AsyncTask<
     }
 }
 
-
-
 private class SynchronizeAsyncTask(private val activity: StaticActivity) : AsyncTask<Void?, Void?, Void?>() {
 
     private val progressDialog: ProgressDialog by lazy {
@@ -293,4 +295,11 @@ private class SynchronizeAsyncTask(private val activity: StaticActivity) : Async
         error = false
         Toast.makeText(activity, activity.getString(R.string.succesfully_loaded), Toast.LENGTH_LONG).show()
     }
+}
+
+private fun logout(activity: StaticActivity) {
+    activity.deleteFile(Strings.FILE_NAME)
+    activity.deleteFile(Strings.LOGIN_FILE_NAME)
+    activity.startActivity(Intent(activity, MainActivity::class.java))
+    activity.showToast(activity.getString(R.string.message_logout))
 }

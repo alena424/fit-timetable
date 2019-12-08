@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,13 +31,10 @@ import com.tam.fittimetable.backend.core.data.SubjectManager;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -167,20 +163,17 @@ public class MainActivity extends AppCompatActivity {
        if (!isNetworkAvailable()) {
            showToast(this, getString(R.string.message_error_network_connection));
        } else {
-
            try {
                SubjectManager sm = new SubjectManager();
                ExecutorService executor = Executors.newSingleThreadExecutor();
                FutureTasks futureTask = new FutureTasks();
                futureTask.execute(executor.submit(sm.get()));
                saveLoginToFile(name, password);
-           } catch (ParseException e) {
+           } catch (ParseException | DownloadException e) {
                e.printStackTrace();
-           } catch (DownloadException e) {
-               e.printStackTrace();
+               showToast(this, getString(R.string.message_login_failed));
            }
        }
-
     }
 
     /**
@@ -263,16 +256,8 @@ public class MainActivity extends AppCompatActivity {
                 fos.write(jsonData.toString().getBytes());
                 System.out.println(jsonData.toString());
                 loginSuccessful = true;
-
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 e.printStackTrace();
-
-            }  catch (InterruptedException e) {
-                e.printStackTrace();
-
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-
             } finally {
                 if (fos != null){
                     try {
@@ -295,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
             if (loginSuccessful) {
                 final Intent intent = new Intent(mainActivity, StaticActivity.class);
                 startActivity(intent);
+                showToast(mainActivity, mainActivity.getString(R.string.message_login_successfull));
             } else {
                 new AlertDialog.Builder(mainActivity).setMessage(R.string.uncorrect_login).setCancelable(true)
                         .setPositiveButton("OK", null)

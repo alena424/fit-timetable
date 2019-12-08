@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 import com.tam.fittimetable.backend.core.extract.Extractor;
@@ -15,7 +14,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;

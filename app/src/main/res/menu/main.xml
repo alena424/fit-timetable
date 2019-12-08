@@ -49,4 +49,9 @@
         android:id="@+id/action_export"
         android:orderInCategory="400"
         android:title="@string/export" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="500"
+        android:title="@string/action_logout" />
 </menu>

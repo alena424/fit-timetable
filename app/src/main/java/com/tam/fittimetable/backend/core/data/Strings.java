@@ -28,7 +28,7 @@ public class Strings {
     public static final String WEB_CODING = "ISO-8859-2";
 
     public static final String DATE_FORMAT = "dd. MMM yyyy";
-    public static final String  LOGIN_FILE_NAME = "login.txt";
+    public static final String LOGIN_FILE_NAME = "login.txt";
     public static final String DATE_FORMAT_ACADEMIC = "dd MMM yyyy";
 
     public static final String DATE_FORMAT_DD_MM_YYYY = "dd-MM-yyyy";
