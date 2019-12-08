@@ -5,16 +5,11 @@
 
     <item
         android:id="@+id/action_today"
-        android:orderInCategory="100"
+        android:orderInCategory="50"
         android:title="@string/action_today"
+        app:showAsAction="ifRoom" />
 
-        app:showAsAction="ifRoom"
-
-        />
-
-    <group android:checkableBehavior="single"
-        >
-
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_day_view"
             android:orderInCategory="100"
@@ -39,7 +34,10 @@
             android:orderInCategory="300"
             android:title="@string/action_week_view"
             app:showAsAction="never" />
-
     </group>
 
+    <item
+        android:id="@+id/action_export"
+        android:orderInCategory="400"
+        android:title="@string/export" />
 </menu>
