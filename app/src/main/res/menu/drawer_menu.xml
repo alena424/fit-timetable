@@ -11,7 +11,7 @@
     </item>
         <item android:id="@+id/export"
             android:icon="@drawable/ic_share_black_24dp"
-            android:title="@string/export_google">
+            android:title="@string/export">
         </item>
 
 

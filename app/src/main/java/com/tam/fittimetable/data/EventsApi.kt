@@ -7,8 +7,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.tam.fittimetable.apicient.ApiEvent
 import com.tam.fittimetable.backend.core.data.Strings
-import com.tam.fittimetable.backend.core.data.SubjectManager
-import com.tam.fittimetable.backend.core.data.SubjectManager.*
 import java.lang.Thread.sleep
 
 interface EventsApi {

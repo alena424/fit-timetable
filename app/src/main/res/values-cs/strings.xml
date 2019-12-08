@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FIT Timetable</string>
+    <string name="action_day_view">Denní pohled</string>
+    <string name="action_five_day_view">Pětidenní pohled</string>
+    <string name="action_three_day_view">Třídenní pohled</string>
+    <string name="action_today">Dnes</string>
+    <string name="action_week_view">Týdenní pohled</string>
+    <string name="date_infos">Od %1$s do %2$s</string>
+    <string name="export">Export do souboru .ics</string>
+    <string name="settings_string">Nastavení</string>
+    <string name="signout_string">Odhlásit se</string>
+    <string name="message_exporting">Exportuji předměty…</string>
+    <string name="organisation_name">VUT FIT TAMa</string>
+    <string name="message_export_failed">Při exportování předmětů nastala chyba.</string>
+    <string name="message_export_success">Předměty byly úspěšně exportovány do souboru %1$s."</string>
+    <string name="link_to_course_page">Odkaz na kartu předmětu</string>
+    <string name="link_to_room">Odkaz na místnost</string>
+    <string name="link_to_map">Odkaz na mapu areálu</string>
+    <string name="message_login_successfull">Byli jste úspěšně přihlášeni</string>
+    <string name="message_login_failed">Při přihlášení nastala chyba</string>
+    <string name="message_error_network_connection">Síťové připojení není k dispozici</string>
+    <string name="login">Přihlásit se</string>
+</resources>

@@ -2,10 +2,13 @@ package com.tam.fittimetable.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -155,6 +158,11 @@ public class MainActivity extends AppCompatActivity {
        String name = String.valueOf(nameEdit.getText()).trim();
        String password = String.valueOf(passwordEdit.getText()).trim();
        Downloader.setAuth(name,password);
+       if (!isNetworkAvailable()) {
+           showToast(this, getString(R.string.message_error_network_connection));
+       } else {
+           showToast(this, getString(R.string.message_login_failed));
+       }
 
        try {
            SubjectManager sm = new SubjectManager();
@@ -280,11 +288,22 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 new AlertDialog.Builder(mainActivity).setMessage("Nesprávné jméno nebo heslo!").setCancelable(true)
                         .setPositiveButton("OK", null)
-                .show();
+                        .show();
             }
-
-
         }
 
+
+    }
+
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

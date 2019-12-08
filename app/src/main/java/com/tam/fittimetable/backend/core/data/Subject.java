@@ -17,13 +17,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+
 /**
- *
  * @author Petr Kohout <xkohou14 at stud.fit.vutbr.cz>
  */
 public final class Subject {
 
-    enum Day {
+    public enum Day {
         MONDAY("Monday", 1, "Mon"),
         TUESDAY("Tuesday", 2, "Tue"),
         WEDNESDAY("Wednesday", 3, "Wed"),
@@ -199,9 +199,7 @@ public final class Subject {
     }
 
     /**
-     *
      * @param week number of week (from 1 to 13)
-     * @return
      */
     public boolean isMentioned(int week) {
         if(week < 1 || week > 13) {
@@ -436,5 +434,4 @@ public final class Subject {
         }
         return true;
     }
-
 }
