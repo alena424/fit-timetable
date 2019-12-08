@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,9 +32,11 @@ import com.tam.fittimetable.backend.core.data.SubjectManager;
 import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // if there already data, we dont have to sign up again, we can directly go to timetable
-        /*FileInputStream fin = null;
+        FileInputStream fin = null;
         try {
             fin = openFileInput(Strings.FILE_NAME);
 
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("File was not found");
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
         // variables need to synchronized
         mainActivity = this;
@@ -133,7 +136,9 @@ public class MainActivity extends AppCompatActivity {
             fos = this.openFileOutput(Strings.LOGIN_FILE_NAME, MODE_PRIVATE);
             String txt = name.concat(",").concat(password);
             fos.write(txt.getBytes());
-            System.out.println("Write sucessfully " + txt);
+            System.out.println("Write sucessfully to " + txt);
+            //showToast(this, "Saved");
+
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -158,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
        String name = String.valueOf(nameEdit.getText()).trim();
        String password = String.valueOf(passwordEdit.getText()).trim();
        Downloader.setAuth(name,password);
+
        if (!isNetworkAvailable()) {
            showToast(this, getString(R.string.message_error_network_connection));
        } else {
@@ -186,19 +192,23 @@ public class MainActivity extends AppCompatActivity {
 
         String savedLogin = "";
         String savedPass = "";
-        InputStream is = null;
+        FileInputStream is = null;
         try {
-            is = getAssets().open(Strings.LOGIN_FILE_NAME);
+
+            is = this.openFileInput(Strings.LOGIN_FILE_NAME);
+            //is = getAssets().open(Strings.LOGIN_FILE_NAME);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
 
             String text = new String(buffer);
             String[] token = text.split(",");
+           // System.out.println("text " + text);
             if ( token.length == 2 ) {
                 savedLogin = token[0];
                 savedPass = token[1];
             }
+          //  System.out.println("set login to " + is.getClass().getResource());
             is.close();
         }
         catch (IOException e) {
@@ -207,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
         nameEdit.setText(savedLogin);
         passwordEdit.setText(savedPass);
+
     }
 
     @Override
@@ -248,10 +259,10 @@ public class MainActivity extends AppCompatActivity {
                 f.get();
                 JsonArray jsonData = SubjectManager.json;
 
-            fos = openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
-            fos.write(jsonData.toString().getBytes());
-            System.out.println(jsonData.toString());
-            loginSuccessful = true;
+                fos = openFileOutput(Strings.FILE_NAME, MODE_PRIVATE);
+                fos.write(jsonData.toString().getBytes());
+                System.out.println(jsonData.toString());
+                loginSuccessful = true;
 
             } catch (IOException e) {
                 e.printStackTrace();

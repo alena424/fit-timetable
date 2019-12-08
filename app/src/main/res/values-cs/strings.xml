@@ -25,4 +25,7 @@
     <string name="trying_to_login">Přihlašování...</string>
     <string name="uncorrect_login">Nesprávné jméno nebo heslo! Vyplňte prosím znova.</string>
     <string name="loading_courses">Načítám předměty ...</string>
+    <string name="downloading_courses_from_wis">Stahování předmětů z osobního rozvrhu ...</string>
+    <string name="message_fail_synchronize">Nepovedlo se synchronizovat data z wisu. Zkuste se prosím přihlásit.</string>
+    <string name="succesfully_loaded">Data úspěšně načtena z wisu.</string>
 </resources>

@@ -25,4 +25,7 @@
     <string name="trying_to_login">Trying to log in...</string>
     <string name="uncorrect_login">Incorrect name or password! Please, try again.</string>
     <string name="loading_courses">Loading courses ...</string>
+    <string name="downloading_courses_from_wis">Downloading courses from yout private timetable ...</string>
+    <string name="message_fail_synchronize">Synchronize failed, try to log in again.</string>
+    <string name="succesfully_loaded">Successfully loaded.</string>
 </resources>

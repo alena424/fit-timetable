@@ -8,18 +8,12 @@ import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Environment
 import android.content.Context.MODE_PRIVATE
-import android.content.Intent.getIntent
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat.startActivity
 import com.alamkanak.weekview.WeekView
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
-import java.io.PrintWriter
 import com.tam.fittimetable.R
 import com.tam.fittimetable.activities.StaticActivity
 import com.tam.fittimetable.backend.core.data.Subject
@@ -29,6 +23,7 @@ import java.util.*
 
 import com.tam.fittimetable.backend.core.data.Strings
 import com.tam.fittimetable.backend.core.extract.Downloader
+import java.io.*
 import java.util.concurrent.Executors
 
 enum class WeekViewType(val value: Int) {
@@ -59,37 +54,7 @@ fun Toolbar.setupWithWeekView(weekView: WeekView<*>) {
                 true
             }
             R.id.actualizeTimetable -> {
-                var savedPass = "aaa"
-                var savedLogin = "xtesar36"
-                System.out.println("ready")
-                var text = File(Strings.LOGIN_FILE_NAME).inputStream().readBytes().toString(Charsets.UTF_8)
-                System.out.println(text)
-                val token = text.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                if (token.size == 2) {
-                    savedLogin = token[0]
-                    savedPass = token[1]
-                }
-
-
-                Downloader.setAuth(savedLogin, savedPass)
-
-                //val sm = SubjectManager()
-                val sm = SubjectManager.get()
-                val es = Executors.newSingleThreadExecutor()
-                val future = es.submit(sm)
-
-                future.get() // status of task
-               val jsonData = sm.getJson()
-                context.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE).use {
-                    if (jsonData != null) {
-                        it.write(jsonData.toString().toByteArray())
-                    }
-                }
-
-                activity.finish()
-                activity.overridePendingTransition(0, 0)
-                activity.startActivity(activity.getIntent())
-                activity.overridePendingTransition(0, 0)
+                SynchronizeAsyncTask(activity).execute()
                 true
             }
             R.id.action_export -> {
@@ -248,5 +213,84 @@ private class ExportAsyncTask(private val activity: StaticActivity) : AsyncTask<
     private fun getExportedTime(ts: Long): String {
         val dateTime = DateTime(ts, DateTimeZone.UTC)
         return "${dateTime.toString("YYYYMMdd")}T${dateTime.toString("HHmmss")}Z"
+    }
+}
+
+
+
+private class SynchronizeAsyncTask(private val activity: StaticActivity) : AsyncTask<Void?, Void?, Void?>() {
+
+    private val progressDialog: ProgressDialog by lazy {
+        ProgressDialog(activity).apply {
+            setCancelable(false)
+            setMessage(activity.getString(R.string.downloading_courses_from_wis))
+        }
+    }
+    private var error: Boolean = false
+
+    override fun onPreExecute() {
+        super.onPreExecute()
+        error = false
+        progressDialog.show()
+    }
+
+    override fun doInBackground(vararg params: Void?): Void? {
+        var savedPass = ""
+        var savedLogin = ""
+        System.out.println("ready")
+
+        try {
+            var fileInputStream: FileInputStream? = null
+            fileInputStream = activity.openFileInput(Strings.LOGIN_FILE_NAME)
+            var inputStreamReader: InputStreamReader = InputStreamReader(fileInputStream)
+            val bufferedReader: BufferedReader = BufferedReader(inputStreamReader)
+            val stringBuilder: StringBuilder = StringBuilder()
+            var text: String? = null
+            while ({ text = bufferedReader.readLine(); text }() != null) {
+                stringBuilder.append(text)
+            }
+            System.out.println(stringBuilder.toString())
+            val token = stringBuilder.toString().split(",")
+
+            if (token.size == 2) {
+                savedLogin = token[0]
+                savedPass = token[1]
+            }
+
+            Downloader.setAuth(savedLogin, savedPass)
+            val sm = SubjectManager.get()
+            val es = Executors.newSingleThreadExecutor()
+            val future = es.submit(sm)
+
+            future.get() // status of task
+            val jsonData = sm.getJson()
+            activity.openFileOutput(Strings.FILE_NAME, MODE_PRIVATE).use {
+                if (jsonData != null) {
+                    it.write(jsonData.toString().toByteArray())
+                }
+            }
+
+            activity.finish()
+            activity.overridePendingTransition(0, 0)
+            activity.startActivity(activity.getIntent())
+            activity.overridePendingTransition(0, 0)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            error = true
+            Toast.makeText(activity, activity.getString(R.string.message_fail_synchronize), Toast.LENGTH_LONG).show()
+        }
+
+        return null
+    }
+
+    override fun onPostExecute(result: Void?) {
+        super.onPostExecute(result)
+
+        if (progressDialog.isShowing) {
+            progressDialog.dismiss()
+        }
+
+        error = false
+        Toast.makeText(activity, activity.getString(R.string.succesfully_loaded), Toast.LENGTH_LONG).show()
     }
 }

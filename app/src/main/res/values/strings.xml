@@ -25,4 +25,7 @@
     <string name="trying_to_login">Přihlašování...</string>
     <string name="uncorrect_login">Nesprávné jméno nebo heslo!</string>
     <string name="loading_courses">Načítám předměty ...</string>
+    <string name="succesfully_loaded">Successfully loaded</string>
+    <string name="downloading_courses_from_wis">Downloading courses from wis ...</string>
+    <string name="message_fail_synchronize">Synchronize failed, try to log in again.</string>
 </resources>
