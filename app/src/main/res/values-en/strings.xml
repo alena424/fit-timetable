@@ -12,7 +12,7 @@
     <string name="message_exporting">Exporting courses…</string>
     <string name="organisation_name">VUT FIT TAMa</string>
     <string name="message_export_failed">Exporting of courses failed.</string>
-    <string name="message_export_success">Courses have been successfully exported to file %1$s.</string>
+    <string name="message_export_success">Courses have been successfully exported to file %1$s.\n\nYou can import the file, e.g., to the Google Calendar (using web interface: Settings -> Import &amp; export)\nSome Android applications support importing ICS files directly, e.g., Simple Calendar.</string>
     <string name="link_to_course_page">Link to the course page</string>
     <string name="link_to_room">Link to the room</string>
     <string name="link_to_map">Link to the map of a building</string>

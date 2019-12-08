@@ -4,6 +4,7 @@
 package com.tam.fittimetable.util
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
@@ -172,11 +173,15 @@ private class ExportAsyncTask(private val activity: StaticActivity) : AsyncTask<
             progressDialog.dismiss()
         }
 
-        val message =
-                if (error) activity.getString(R.string.message_export_failed)
-                else activity.getString(R.string.message_export_success, file.canonicalPath)
+        if (error) {
+            Toast.makeText(activity, activity.getString(R.string.message_export_failed), Toast.LENGTH_LONG).show()
+        } else {
+            AlertDialog.Builder(activity).setMessage(activity.getString(R.string.message_export_success, file.canonicalPath))
+                    .setCancelable(true)
+                    .setPositiveButton("OK", null)
+                    .show()
+        }
         error = false
-        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
     private fun addEventData(subject: Subject, writer: PrintWriter, week: Int, calendar: Calendar, begginingOfSemester: Date, everyWeek: Boolean) {

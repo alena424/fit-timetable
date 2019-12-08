@@ -12,7 +12,7 @@
     <string name="message_exporting">Exportuji předměty…</string>
     <string name="organisation_name">VUT FIT TAMa</string>
     <string name="message_export_failed">Při exportování předmětů nastala chyba.</string>
-    <string name="message_export_success">Předměty byly úspěšně exportovány do souboru %1$s."</string>
+    <string name="message_export_success">Předměty byly úspěšně exportovány do souboru %1$s.\n\nSoubor můžete importovat například do Google kalendáře (přes webové rozhraní: Nastavení -> Import &amp; export).\nNěkteré Android aplikace umožňují import ICS souborů přímo, například Simple Calendar.</string>
     <string name="link_to_course_page">Odkaz na kartu předmětu</string>
     <string name="link_to_room">Odkaz na místnost</string>
     <string name="link_to_map">Odkaz na mapu areálu</string>
