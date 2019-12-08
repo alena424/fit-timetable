@@ -186,6 +186,34 @@ public class SubjectManager implements Callable<Boolean> {
     }
 
     /**
+     * Selects Subject from list to add some other things or null
+     * @param s subject to select
+     * @return
+     */
+    public Subject getSubjectFromList(Subject s) {
+        for (Subject subject : subjects) {
+            if (subject.equals(s)) {
+                return subject;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Selects lasr Subject from list to add some other things or null
+     * @param s subject to select
+     * @return
+     */
+    public Subject getLastSubjectFromList(Subject s) {
+        for (int i = subjects.size() -1 ; i>=0 ; i--) {
+            if (subjects.get(i).equals(s)) {
+                return subjects.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Singleton construction
      *
      * @return instance of SubjectManager

@@ -60,6 +60,7 @@ public final class Subject {
     private int to;
     private Day day;
     private String color;
+    private Date eventDay = null;
 
     private boolean[] weeks = {false, false, false, false, false, false, false, false, false, false, false, false, false}; // weeks when event happens
 
@@ -80,11 +81,24 @@ public final class Subject {
     /**
      * Sets week at index to value
      * @param index
+     *
+     * @return true if week is in semester range and could be set up false otherwise
      */
-    public void setWeeksOfMentoring(int index, boolean value){
+    public boolean setWeeksOfMentoring(int index, boolean value){
         if (index >= 0 && index < 12) {
             weeks[index] = value;
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    public Date getEventDay() {
+        return eventDay;
+    }
+
+    public void setEventDay(Date eventDay) {
+        this.eventDay = eventDay;
     }
 
     /**
@@ -208,6 +222,19 @@ public final class Subject {
         return weeks[week - 1];
     }
 
+    /**
+     *
+     * @return true if subject is mentioned in semester (event 1 week)
+     */
+    public boolean isMentioned() {
+        for (boolean w : weeks) {
+            if (w) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getName() {
         return name;
     }
@@ -266,7 +293,7 @@ public final class Subject {
 
     @Override
     public String toString() {
-        return name + "|" + linkToSubject + "|" + room.getName() + "|" + from + "|" + to + "|" + day.shortCut() + "|" + color + "|" + semicolonedWeeks();
+        return name + "|" + linkToSubject + "|" + room.getName() + "|" + from + "|" + to + "|" + day.shortCut() + "|" + color + "|" + semicolonedWeeks()+ "|" + eventDay;
     }
     
     private String parseToJson(String arg, String value) {
@@ -337,9 +364,9 @@ public final class Subject {
         }
         
         for (int i = 0; i <= lastIndex; i++) {
+            JsonObject courseJson = new JsonObject();
+            tmp = parseAttributes(courseJson, i);
             if(weeks[i]) { // subject is mentioned this week
-                JsonObject courseJson = new JsonObject();
-                tmp = parseAttributes(courseJson, i);
                 c.setTime(begginingOfSemester);
                 c.add(Calendar.DAY_OF_MONTH, i*7 + day.value()-1);
 
@@ -350,15 +377,24 @@ public final class Subject {
                 courseJson.addProperty("year", c.get(Calendar.YEAR));
                 jsonArray.add(courseJson);
 
-                actualJson += parseToJson("dayOfMonth", c.get(Calendar.DAY_OF_MONTH)) + ",\n";
+                /*actualJson += parseToJson("dayOfMonth", c.get(Calendar.DAY_OF_MONTH)) + ",\n";
                 actualJson += parseToJson("month", c.get(Calendar.MONTH)) + ",\n";
                 actualJson += parseToJson("year", c.get(Calendar.YEAR)) + "\n";
                 finalJson += packJsonObject(actualJson);
                 if(i != lastIndex) { //if it is last record does not make ,
                     finalJson += ",\n";
-                }                
+                }       */
+            } else {
+                if(eventDay != null) {
+                    c.setTime(eventDay);
+                    courseJson.addProperty("dayOfMonth", c.get(Calendar.DAY_OF_MONTH));
+                    courseJson.addProperty("month", c.get(Calendar.MONTH));
+                    courseJson.addProperty("year", c.get(Calendar.YEAR));
+                    jsonArray.add(courseJson);
+                    return jsonArray;
+                }
             }
-            actualJson = "";            
+            //actualJson = "";
         }
         //return courseJson;
         return jsonArray;

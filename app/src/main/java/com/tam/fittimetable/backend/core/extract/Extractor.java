@@ -1,6 +1,7 @@
 package com.tam.fittimetable.backend.core.extract;
 
 import com.tam.fittimetable.backend.core.data.Strings;
+import com.tam.fittimetable.backend.core.data.Subject;
 import com.tam.fittimetable.backend.core.data.SubjectManager;
 import java.io.File;
 import java.io.IOException;
@@ -78,9 +79,31 @@ public class Extractor {
                         //System.out.println(name + "|" + subjectLink + "|" + room + "|" + from + "|" + to + "|" + day + "|" + color + "|--> " + manager.getSubjects().size());
                         manager.addSubject(name, getLinkToSubjectCard(subjectLink, name), room, from, to, day, color);
                         if (e.select("nobr").size() > 0) {
+                            System.out.println(e);
+                            Subject toCompare = new Subject(name, getLinkToSubjectCard(subjectLink, name), room, from, to, day, color); // actual subject
+                            Subject s = manager.getSubjectFromList(toCompare); // take it from the list
                             SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_YYYY_MM_DD);
                             int index = SubjectManager.get().getWeekOfSemester(formatter.parse(e.select("nobr").first().text()));
-                            manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring(index, true);
+                            if(!s.setWeeksOfMentoring(index, true)) {
+                                if(s.isMentioned()) {
+                                    Subject last = manager.getLastSubjectFromList(toCompare);
+                                    if(last.getEventDay() == null) {
+                                        Subject examSubject = new Subject(name, getLinkToSubjectCard(subjectLink, name), room, from, to, day, "#ec782c");
+                                        examSubject.setEventDay(formatter.parse(e.select("nobr").first().text()));
+                                        manager.addSubject(examSubject);
+                                        System.out.println("Exam set up to date: " + examSubject);
+                                    } else if(!last.getEventDay().equals(formatter.parse(e.select("nobr").first().text()))) {
+                                            Subject examSubject = new Subject(name, getLinkToSubjectCard(subjectLink, name), room, from, to, day, "#ec782c");
+                                            examSubject.setEventDay(formatter.parse(e.select("nobr").first().text()));
+                                            manager.addSubject(examSubject);
+                                            System.out.println("Exam set up to date: " + examSubject);
+                                    }
+                                } else {
+                                    s.setEventDay(formatter.parse(e.select("nobr").first().text()));
+                                    s.setColor("#ec782c");
+                                    System.out.println("Exam set up to date: " + s);
+                                }
+                            }
                         } else {
                             manager.getSubjects().get(manager.getSubjects().size() - 1).setWeeksOfMentoring();
                         }
