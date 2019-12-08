@@ -17,4 +17,8 @@
     <string name="link_to_course_page">Odkaz na kartu předmětu</string>
     <string name="link_to_room">Odkaz na místnost</string>
     <string name="link_to_map">Odkaz na mapu areálu</string>
+    <string name="message_login_successfull">Byli jste úspěšně přihlášeni</string>
+    <string name="message_login_failed">Při přihlášení nastala chyba</string>
+    <string name="message_error_network_connection">Síťové připojení není k dispozici</string>
+    <string name="login">Přihlásit se</string>
 </resources>

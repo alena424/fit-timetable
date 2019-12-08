@@ -2,15 +2,17 @@ package com.tam.fittimetable.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,19 +24,11 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.JsonArray;
 import com.tam.fittimetable.R;
 import com.tam.fittimetable.backend.core.data.Strings;
-import com.tam.fittimetable.backend.core.data.Subject;
 import com.tam.fittimetable.backend.core.data.SubjectManager;
-import com.tam.fittimetable.backend.core.extract.AsyncCaller;
-import com.tam.fittimetable.backend.core.extract.DownloadException;
 import com.tam.fittimetable.backend.core.extract.Downloader;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -150,26 +144,21 @@ System.out.println(Build.VERSION.SDK_INT);
 
            //SubjectManager.get().getSubjects();
 
-           showToast(this,"Úspěšně přihlášen");
+           showToast(this, getString(R.string.message_login_successfull));
            System.setProperty("login", name);
            System.setProperty("password", password);
 
            //new AsyncCaller().execute();
 
            startActivity(intent);
-       } catch (IOException e) {
+       } catch (IOException | ParseException | InterruptedException | ExecutionException e) {
            e.printStackTrace();
-           showToast(this,e.getMessage());
-       } catch (ParseException e) {
-           e.printStackTrace();
-           showToast(this,e.getMessage());
 
-       } catch (InterruptedException e) {
-           e.printStackTrace();
-           showToast(this,e.getMessage());
-       } catch (ExecutionException e) {
-           e.printStackTrace();
-           showToast(this,e.getMessage());
+           if (!isNetworkAvailable()) {
+               showToast(this, getString(R.string.message_error_network_connection));
+           } else {
+               showToast(this, getString(R.string.message_login_failed));
+           }
        } finally {
            if (fos != null){
                try {
@@ -201,5 +190,17 @@ System.out.println(Build.VERSION.SDK_INT);
                 }
                 break;
         }
+    }
+
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

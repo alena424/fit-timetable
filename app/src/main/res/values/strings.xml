@@ -17,4 +17,8 @@
     <string name="link_to_course_page">Link to the course page</string>
     <string name="link_to_room">Link to the room</string>
     <string name="link_to_map">Link to the map of a building</string>
+    <string name="message_login_successfull">You have been successfully logged in</string>
+    <string name="message_login_failed">Login failed</string>
+    <string name="message_error_network_connection">Network connection is not available</string>
+    <string name="login">Log in</string>
 </resources>
