@@ -304,7 +304,6 @@ private class SynchronizeAsyncTask(private val activity: StaticActivity) : Async
 
 private fun logout(activity: StaticActivity) {
     activity.deleteFile(Strings.FILE_NAME)
-    activity.deleteFile(Strings.LOGIN_FILE_NAME)
     activity.startActivity(Intent(activity, MainActivity::class.java))
     activity.showToast(activity.getString(R.string.message_logout))
 }
