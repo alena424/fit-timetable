@@ -28,9 +28,7 @@ import java.lang.Exception
 import java.util.*
 
 import com.tam.fittimetable.backend.core.data.Strings
-import com.tam.fittimetable.backend.core.data.SubjectManager
 import com.tam.fittimetable.backend.core.extract.Downloader
-import java.io.File
 import java.util.concurrent.Executors
 
 enum class WeekViewType(val value: Int) {

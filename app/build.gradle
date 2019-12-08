@@ -39,6 +39,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'joda-time:joda-time:2.10.5'
+    // https://mvnrepository.com/artifact/joda-time/joda-time
+    implementation group: 'joda-time', name: 'joda-time', version: '2.3'
 }
 
 repositories {

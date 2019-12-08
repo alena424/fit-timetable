@@ -20,4 +20,6 @@
     <string name="message_login_failed">Login failed</string>
     <string name="message_error_network_connection">Network connection is not available</string>
     <string name="login">Log in</string>
+    <string name="aktualizovat_z_wisu">Actualize from wis</string>
+    <string name="appwidget_text">App widget</string>
 </resources>
