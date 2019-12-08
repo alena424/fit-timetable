@@ -161,19 +161,18 @@ public class MainActivity extends AppCompatActivity {
        if (!isNetworkAvailable()) {
            showToast(this, getString(R.string.message_error_network_connection));
        } else {
-           showToast(this, getString(R.string.message_login_failed));
-       }
 
-       try {
-           SubjectManager sm = new SubjectManager();
-           ExecutorService executor = Executors.newSingleThreadExecutor();
-           FutureTasks futureTask = new FutureTasks();
-           futureTask.execute(executor.submit(sm.get()));
-           saveLoginToFile(name, password);
-       } catch (ParseException e) {
-           e.printStackTrace();
-       } catch (DownloadException e) {
-           e.printStackTrace();
+           try {
+               SubjectManager sm = new SubjectManager();
+               ExecutorService executor = Executors.newSingleThreadExecutor();
+               FutureTasks futureTask = new FutureTasks();
+               futureTask.execute(executor.submit(sm.get()));
+               saveLoginToFile(name, password);
+           } catch (ParseException e) {
+               e.printStackTrace();
+           } catch (DownloadException e) {
+               e.printStackTrace();
+           }
        }
 
     }
