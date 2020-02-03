@@ -244,21 +244,26 @@ public class SubjectManager implements Callable<Boolean> {
             winterHolidays = constatntFormatter.parse(Strings.END_OF_YEAR_DD_MM_ + actual.toString().trim().split(" ")[5]);
 
             Date tmp1, tmp2;
-            if (actual.compareTo(summerHolidays) >= 0) { // winter semster
+            if (actual.compareTo(summerHolidays) >= 0) { // winter semester
                 for (Date d : dates) {
                     if (d.compareTo(summerHolidays) * d.compareTo(winterHolidays) <= 0) { // it is minus because 1 * -1
                         semester.add(d);
                     }
                 }
             } else { // summer semester
-                winterHolidays.setYear(0); //whatever it should be higher, it has to be ACTUAL_YEAR - 1
+                //System.out.println("Year  is " + year);
+                winterHolidays.setYear(actual.getYear() - 1); //whatever it should be higher, it has to be ACTUAL_YEAR - 1
+                //System.out.println(actual.toString() + "  is " + actual.compareTo(winterHolidays) + " date winter " + winterHolidays);
+                //System.out.println(actual.toString() + "  is " + actual.compareTo(summerHolidays) + " date summer " + summerHolidays);
                 for (Date d : dates) {
                     if (d.compareTo(winterHolidays) * d.compareTo(summerHolidays) <= 0) { // it is minus because 1 * -1
+                        //System.out.println(d.toString());
                         semester.add(d);
                     }
                 }
             }
 
+            //System.out.println("Actual semester call: " + semester.get(0).toString() + " - " + semester.get(1));
             return semester;
         } catch (ParseException ex) {
             Logger.getLogger(SubjectManager.class.getName()).log(Level.SEVERE, null, ex);

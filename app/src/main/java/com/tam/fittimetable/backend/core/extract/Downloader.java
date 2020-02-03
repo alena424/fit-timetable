@@ -150,10 +150,10 @@ public class Downloader {
         File loadeFile = new File(path);
 
         if (loadeFile.exists() && checkExistence) {
-            System.out.println("Cache hit: " + path);
+            //System.out.println("Cache hit: " + path);
             return loadeFile;
         } else  { // it is like download new
-            System.out.println("Cache MISS: " + path);
+            //System.out.println("Cache MISS: " + path);
             return download(link, storeTo);
         }
     }
