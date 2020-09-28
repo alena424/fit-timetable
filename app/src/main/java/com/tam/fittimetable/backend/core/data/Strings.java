@@ -11,7 +11,7 @@ public class Strings {
     public static final String ROOT = "./";
 
     public static final String PRIVATE_TIMETABLE_LINK = "https://wis.fit.vutbr.cz/FIT/st/studyps-l.php.en";
-    public static final String ACADEMIC_YEAR = "https://www.fit.vut.cz/study/calendar/2019/.en";
+    public static final String ACADEMIC_YEAR = "https://www.fit.vut.cz/study/calendar/%d/.en";
 
     public static final String CERTIFICATES = ROOT + "app/keystore/";
     public static final String FIT_CACERT = "fit-cacert.crt";

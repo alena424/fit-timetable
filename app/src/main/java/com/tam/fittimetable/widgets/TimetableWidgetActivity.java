@@ -3,8 +3,10 @@ package com.tam.fittimetable.widgets;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.widget.RemoteViews;
 
+import com.alamkanak.weekview.WeekView;
 import com.tam.fittimetable.R;
 
 /**
@@ -15,11 +17,16 @@ public class TimetableWidgetActivity extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-
-
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
+       // CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.timetable_widget_activity);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.activity_static);
+        WeekView myView = new WeekView(context);
+        myView.measure(150,150);
+        myView.measure(150,150);
+        myView.layout(0,0,150,150);
+        myView.setDrawingCacheEnabled(true);
+        Bitmap bitmap=myView.getDrawingCache();
+        views.setImageViewBitmap(R.id.dial, bitmap);
 
         //views.setTextViewText(R.id.appwidget_text, widgetText);
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,14 +44,14 @@ public class Extractor {
             int rowsToAnotherDay = 0;
 
             Document doc = Jsoup.parse(file, "ISO-8859-2");
-            Element elm = doc.select("table").get(3); // select 3rd table which contains timetable
+            Element elm = doc.select("table").get(2); // select 3rd table which contains timetable
             SubjectManager manager = SubjectManager.get();
             Element dayEl;
 
             for (int y = 0; y < 5; y++) { //iterate through week days
                 if (elm.select("tr").size() <= rowCounter) {
                     //System.out.println("Konec tabulky " + elm.select("tr") );
-                    continue;
+                    break;
                 }
                 dayEl = elm.select("tr").get(rowCounter);
                 day = dayEl.select("th").first().text(); // select day name // Monday, Tuesday...
@@ -130,12 +131,12 @@ public class Extractor {
         Elements elms = doc.select("a"); // select a elemnts
 
         for (Element e : elms) {
-            if (e.text().toLowerCase().contains("web")) {
+            if (e.text().toLowerCase().contains("course card")) {
                 return e.attr("href");
             }
         }
-
-        throw new IOException("address: " + link + " does not contain subject link");
+        return "";
+        //throw new IOException("address: " + link + " does not contain subject link");
     }
 
     public static List<Date> selectDatesOfSemesters() throws ParseException {
@@ -144,7 +145,8 @@ public class Extractor {
             SimpleDateFormat formatter = new SimpleDateFormat(Strings.DATE_FORMAT_YYYY_MM_DD);
 
             Document doc;
-            doc = Jsoup.parse(Downloader.download(Strings.ACADEMIC_YEAR, Strings.ACADEMIC_YEAR_FILE), "ISO-8859-2");
+
+            doc = Jsoup.parse(Downloader.download(String.format(Strings.ACADEMIC_YEAR, Calendar.getInstance().get(Calendar.YEAR)), Strings.ACADEMIC_YEAR_FILE), "ISO-8859-2");
             Elements elms = doc.select("span"); // select spans which contain <times> tags
 
             for (Element e : elms) {

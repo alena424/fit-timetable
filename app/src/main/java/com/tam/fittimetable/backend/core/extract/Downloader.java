@@ -104,9 +104,9 @@ public class Downloader {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             InputStream in = urlConnection.getInputStream();
             br = new BufferedReader(new InputStreamReader(in));
-            //File f = File.createTempFile(storeTo,"",Environment.getExternalStoragePublicDirectory(
+            //File f = File.createTempFile(storeTo,"",myContext.getExternalFilesDir(
               //      Environment.DIRECTORY_PICTURES));
-            File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo );
+            File f = new File(myContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo );
             System.out.println("Downloading file: " + f);
             BufferedWriter writer = new BufferedWriter(new FileWriter(f));
             while ((line = br.readLine()) != null) {
@@ -146,7 +146,7 @@ public class Downloader {
      * @return
      */
     public static File download(String link, String storeTo, Boolean checkExistence) throws IOException {
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo;
+        String path = myContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() + "/" + storeTo;
         File loadeFile = new File(path);
 
         if (loadeFile.exists() && checkExistence) {
@@ -183,7 +183,7 @@ public class Downloader {
     }
 
     protected static void createFolders() {
-        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
+        File f = new File(myContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
         if(!f.isDirectory()) {
             f.mkdir();
         }
@@ -249,8 +249,9 @@ public class Downloader {
     }
 
     public static void recreateDir() {
-        System.out.println("Recreating download dir at: " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
-        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
+        //myContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        System.out.println("Recreating download dir1 at: " + myContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
+        File f = new File(myContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() + "/" + Strings.DOWNLOAD);
         if (f.exists()) {
             if (f.isDirectory()) {
                 for (File file : f.listFiles()) {

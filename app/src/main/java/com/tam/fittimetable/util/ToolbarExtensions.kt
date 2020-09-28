@@ -44,10 +44,6 @@ fun Toolbar.setupWithWeekView(weekView: WeekView<*>) {
 
     inflateMenu(R.menu.main)
     Downloader.setMyContext(context)
-    Downloader.recreateDir()
-
-
-
     setOnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.action_today -> {
